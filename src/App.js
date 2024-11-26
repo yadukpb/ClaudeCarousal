@@ -1,6 +1,6 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import LawServices from './components/LawServices'
+import LawServices from './pages/LawServices'
 import AboutSection from './components/AboutSection'
 import BlogCards from './BlogCards'
 import WhyChooseUs from './components/WhyChooseUs'
@@ -29,6 +29,7 @@ const App = () => {
                 <WhyChooseUs />
               </>
             } />
+            <Route path="/services" element={<LawServices />} />
             <Route path="/blog" element={<BlogPage />} />
             <Route path="/blog1" element={<BlogView />} />
           </Routes>

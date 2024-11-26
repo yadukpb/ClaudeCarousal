@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { FaFacebookF, FaTwitter, FaInstagram } from 'react-icons/fa';
 
 const slides = [
   {
@@ -95,13 +96,16 @@ const HeroSlider = () => {
       </div>
 
       <div className="absolute bottom-4 sm:bottom-8 left-4 sm:left-8 flex gap-2 sm:gap-4">
-        <a href="#" className="text-white hover:text-gray-300 transition-colors text-xs sm:text-base">
+        <a href="#" className="text-white hover:text-gray-300 transition-colors text-xs sm:text-base flex items-center gap-2">
+          <FaFacebookF className="text-lg sm:text-xl" />
           FACEBOOK
         </a>
-        <a href="#" className="text-white hover:text-gray-300 transition-colors text-xs sm:text-base">
+        <a href="#" className="text-white hover:text-gray-300 transition-colors text-xs sm:text-base flex items-center gap-2">
+          <FaTwitter className="text-lg sm:text-xl" />
           TWITTER
         </a>
-        <a href="#" className="text-white hover:text-gray-300 transition-colors text-xs sm:text-base">
+        <a href="#" className="text-white hover:text-gray-300 transition-colors text-xs sm:text-base flex items-center gap-2">
+          <FaInstagram className="text-lg sm:text-xl" />
           INSTAGRAM
         </a>
       </div>
