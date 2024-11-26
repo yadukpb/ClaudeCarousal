@@ -47,31 +47,31 @@ const LawServicePage = () => {
   ]
 
   return (
-    <div className="bg-gradient-to-b from-slate-50 to-slate-100 py-28">
-      <div className="max-w-7xl mx-auto px-6">
+    <div className="bg-gradient-to-b from-slate-50 to-slate-100 py-16 sm:py-28">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div 
           initial={{opacity: 0, y: -20}} 
           animate={{opacity: 1, y: 0}} 
-          className="text-center mb-20"
+          className="text-center mb-12 sm:mb-20"
         >
-          <h1 className="font-cormorant text-[45px] leading-[53px] font-bold text-[#1A1A1A] mb-8">Legal Services Excellence</h1>
-          <p className="font-cormorant text-2xl text-[#4A4A4A] max-w-3xl mx-auto">Comprehensive legal solutions tailored to your specific needs</p>
+          <h1 className="font-cormorant text-3xl sm:text-[45px] leading-tight sm:leading-[53px] font-bold text-[#1A1A1A] mb-4 sm:mb-8">Legal Services Excellence</h1>
+          <p className="font-cormorant text-xl sm:text-2xl text-[#4A4A4A] max-w-3xl mx-auto">Comprehensive legal solutions tailored to your specific needs</p>
         </motion.div>
 
         {serviceCategories.map((category, categoryIndex) => (
-          <motion.div key={category.title} initial={{opacity: 0}} animate={{opacity: 1}} className="mb-20">
-            <div className="flex gap-12">
-              <motion.div className="w-1/4">
-                <div className="sticky top-28">
-                  <h2 className="font-cormorant text-[40px] font-bold text-[#1A1A1A] mb-4">{category.title}</h2>
-                  <p className="font-cormorant text-xl text-[#B8860B]">{category.motto}</p>
+          <motion.div key={category.title} initial={{opacity: 0}} animate={{opacity: 1}} className="mb-12 sm:mb-20">
+            <div className="flex flex-col sm:flex-row gap-6 sm:gap-12">
+              <motion.div className="w-full sm:w-1/4">
+                <div className="sm:sticky sm:top-28">
+                  <h2 className="font-cormorant text-3xl sm:text-[40px] font-bold text-[#1A1A1A] mb-2 sm:mb-4">{category.title}</h2>
+                  <p className="font-cormorant text-lg sm:text-xl text-[#B8860B]">{category.motto}</p>
                 </div>
               </motion.div>
 
-              <div className="w-px bg-[#E8E8E8] self-stretch"></div>
+              <div className="hidden sm:block w-px bg-[#E8E8E8] self-stretch"></div>
 
               <div className="flex-1">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
                   {category.services.map((service, index) => (
                     <motion.div
                       key={service.title}
@@ -79,13 +79,13 @@ const LawServicePage = () => {
                       animate={{opacity: 1, y: 0}}
                       transition={{delay: index * 0.1}}
                       whileHover={{y: -5, scale: 1.02}}
-                      className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-[#E8E8E8]"
+                      className="bg-white rounded-xl p-4 sm:p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-[#E8E8E8]"
                     >
-                      <div className="w-12 h-12 mb-4 bg-[#F5EEE6] rounded-lg flex items-center justify-center">
-                        <i className="material-symbols-outlined text-2xl text-[#B8860B]">{service.icon}</i>
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 mb-3 sm:mb-4 bg-[#F5EEE6] rounded-lg flex items-center justify-center">
+                        <i className="material-symbols-outlined text-xl sm:text-2xl text-[#B8860B]">{service.icon}</i>
                       </div>
-                      <h3 className="font-cormorant text-xl font-bold mb-2 text-[#1A1A1A]">{service.title}</h3>
-                      <p className="text-[#4A4A4A] text-sm leading-relaxed">{service.description}</p>
+                      <h3 className="font-cormorant text-lg sm:text-xl font-bold mb-1 sm:mb-2 text-[#1A1A1A]">{service.title}</h3>
+                      <p className="text-[#4A4A4A] text-xs sm:text-sm leading-relaxed">{service.description}</p>
                     </motion.div>
                   ))}
                 </div>

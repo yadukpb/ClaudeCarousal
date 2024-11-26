@@ -12,6 +12,7 @@ import StickyContact from './components/StickyContact'
 import BlogPage from './pages/BlogsPage'
 import BlogView from './pages/BlogView'
 import LawServices from './components/LawServices'
+import AboutUs from './pages/AboutUs'
 
 const App = () => {
   return (
@@ -24,15 +25,16 @@ const App = () => {
               <>
                 <HeroSlider />
                 <LawServices />
-                <AboutSection />
+                <WhyChooseUs />
+                
                 <FAQ />
                 <BlogCards />
-                <WhyChooseUs />
               </>
             } />
             <Route path="/services" element={<LawServicePage />} />
             <Route path="/blog" element={<BlogPage />} />
             <Route path="/blog1" element={<BlogView />} />
+            <Route path="/about" element={<AboutUs />} />
           </Routes>
         </main>
         <Footer />

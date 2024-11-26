@@ -3,21 +3,15 @@ import { FaFacebookF, FaTwitter, FaInstagram } from 'react-icons/fa';
 
 const slides = [
   {
-    title: "ADVOCATING JUSTICE, DEFENDING RIGHTS",
-    subtitle: "GUIDING LEGAL SOLUTIONS",
-    description: "Administrative law focuses on the regulations and decisions made by government agencies.",
+    title: " Leveraging Learning, Lifting Lives",
+    subtitle: " EXCELLENCE IN LEGAL SERVICES",
+    description: "Empowering lawyers, law students, and businesses with comprehensive research and support services.",
     image: "https://themes.pixelwars.org/lawly/demo-01/wp-content/uploads/sites/2/2023/08/men-standing-before-illuminated-statue-praying-peace-generated-by-ai.jpg"
   },
   {
-    title: "IN PURSUIT OF FAIRNESS AND EQUALITY",
-    subtitle: "EMPOWERING JUSTICE",
-    description: "Administrative law focuses on the regulations and decisions made by government agencies.",
-    image: "https://themes.pixelwars.org/lawly/demo-01/wp-content/uploads/sites/2/2023/08/men-standing-before-illuminated-statue-praying-peace-generated-by-ai.jpg"
-  },
-  {
-    title: "NAVIGATING LEGAL WATERS WITH EXPERTISE",
-    subtitle: "NAVIGATING LEGAL WATERS",
-    description: "Administrative law focuses on the regulations and decisions made by government agencies.",
+    title: "Research Excellence for Legal Professionals",
+    subtitle: "FOCUSED RESEARCH, SHARPER RESULTS",
+    description: "Supporting lawyers with meticulous legal research, document drafting, and case analysis.",
     image: "https://themes.pixelwars.org/lawly/demo-01/wp-content/uploads/sites/2/2023/08/ahmetoz._portrait_of_a_lawyer_rays_of_light_bc920001-5a07-4ae7-b4a3-ae1ccbcb7141.jpg"
   }
 ];

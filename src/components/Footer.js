@@ -1,48 +1,56 @@
 import React from 'react';
-import { Linkedin, Twitter, Facebook } from 'lucide-react';
+import { Linkedin, Twitter, Facebook, Mail, Phone, MapPin } from 'lucide-react';
 
 const Footer = () => {
-  const companyLinks = [
-    { title: 'NEWS', href: '#' },
-    { title: 'OUR TEAM', href: '#' },
-    { title: 'ABOUT US', href: '#' },
-    { title: 'CAREERS', href: '#' },
-    { title: 'CONTACT US', href: '#' },
+  const quickLinks = [
+    { title: 'Home', href: '/' },
+    { title: 'About Us', href: '/about' },
+    { title: 'Services', href: '/services' },
+    { title: 'Blog & Insights', href: '/blog' },
+    { title: 'Work with Us', href: '/careers' },
+    { title: 'Contact', href: '/contact' },
   ];
 
-  const categories = [
-    { title: 'Civil Law', href: '#' },
-    { title: 'Company', href: '#' },
-    { title: 'Criminal Law', href: '#' },
-    { title: 'Family Law', href: '#' },
-    { title: 'Law Institutions', href: '#' },
-    { title: 'Medical Law', href: '#' },
+  const services = [
+    { title: 'For Corporates', href: '/services/corporate' },
+    { title: 'For Lawyers', href: '/services/lawyers' },
+    { title: 'For Law Students', href: '/services/students' },
+    { title: 'Legal Research', href: '/services/research' },
+    { title: 'Document Drafting', href: '/services/drafting' },
+    { title: 'Free Consultation', href: '/consultation' },
+  ];
+
+  const contactInfo = [
+    { Icon: Mail, text: 'info@legalease.solutions', href: 'mailto:info@legalease.solutions' },
+    { Icon: Phone, text: '+91 XXXXX XXXXX', href: 'tel:+91XXXXXXXXXX' },
+    { Icon: MapPin, text: 'National Law School of India University, Bangalore', href: '#' }
   ];
 
   const socialLinks = [
-    { Icon: Linkedin, href: '#' },
-    { Icon: Twitter, href: '#' },
-    { Icon: Facebook, href: '#' },
+    { Icon: Linkedin, href: '#', label: 'LinkedIn' },
+    { Icon: Twitter, href: '#', label: 'Twitter' },
+    { Icon: Facebook, href: '#', label: 'Facebook' }
   ];
 
   return (
     <footer className="bg-[#1c1c1c] text-gray-300 py-16">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {/* Logo Section */}
-          <div className="flex flex-col space-y-4">
+          <div className="flex flex-col space-y-6">
             <img 
               src="/logo.png" 
-              alt="The Trial Attorney Co." 
-              className="h-12 w-auto"
+              alt="LegalEase Solutions" 
+              className="h-auto w-auto"
             />
+            <p className="text-sm">
+              Leveraging Learning, Lifting Lives. Empowering legal professionals and businesses with comprehensive research and support services.
+            </p>
           </div>
 
-          {/* Company Links */}
           <div>
-            <h3 className="text-white text-lg font-medium mb-4">Company links</h3>
+            <h3 className="text-white text-lg font-medium mb-4">Quick Links</h3>
             <ul className="space-y-2">
-              {companyLinks.map((link) => (
+              {quickLinks.map((link) => (
                 <li key={link.title}>
                   <a 
                     href={link.href}
@@ -55,42 +63,49 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Categories */}
           <div>
-            <h3 className="text-white text-lg font-medium mb-4">Categories</h3>
+            <h3 className="text-white text-lg font-medium mb-4">Our Services</h3>
             <ul className="space-y-2">
-              {categories.map((category) => (
-                <li key={category.title}>
+              {services.map((service) => (
+                <li key={service.title}>
                   <a 
-                    href={category.href}
+                    href={service.href}
                     className="hover:text-white transition-colors duration-200"
                   >
-                    {category.title}
+                    {service.title}
                   </a>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Find us */}
           <div>
-            <h3 className="text-white text-lg font-medium mb-4">Find us</h3>
-            <address className="not-italic">
-              <p>650 Birmingham St,</p>
-              <p>London 3000, UK</p>
-              <p className="mt-4">0600 02 52 668 774</p>
-            </address>
+            <h3 className="text-white text-lg font-medium mb-4">Contact Us</h3>
+            <ul className="space-y-4">
+              {contactInfo.map(({ Icon, text, href }, index) => (
+                <li key={index} className="flex items-start space-x-3">
+                  <Icon size={20} className="mt-1 flex-shrink-0" />
+                  <a 
+                    href={href}
+                    className="hover:text-white transition-colors duration-200"
+                  >
+                    {text}
+                  </a>
+                </li>
+              ))}
+            </ul>
             
             <div className="mt-6">
               <p className="mb-3">Follow us:</p>
               <div className="flex space-x-4">
-                {socialLinks.map(({ Icon, href }, index) => (
+                {socialLinks.map(({ Icon, href, label }, index) => (
                   <a
                     key={index}
                     href={href}
-                    className="text-gray-300 hover:text-white transition-colors duration-200"
+                    aria-label={label}
+                    className="text-gray-300 hover:text-white transition-colors duration-200 flex items-center justify-center w-[20px] h-[20px]"
                   >
-                    <Icon size={20} />
+                    <Icon className="w-[20px] h-[20px]" />
                   </a>
                 ))}
               </div>
@@ -98,28 +113,18 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Bottom Bar */}
         <div className="mt-16 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm text-gray-500">
-            © 2020 Qode Interactive. All Rights Reserved
+            © {new Date().getFullYear()} LegalEase Solutions. All Rights Reserved
           </p>
-          <a 
-            href="#" 
-            className="flex items-center text-sm text-gray-500 hover:text-white transition-colors duration-200 mt-4 md:mt-0"
-          >
-            Buy Theme 
-            <svg 
-              className="w-4 h-4 ml-2" 
-              viewBox="0 0 24 24" 
-              fill="none" 
-              stroke="currentColor" 
-              strokeWidth="2" 
-              strokeLinecap="round" 
-              strokeLinejoin="round"
-            >
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
-          </a>
+          <div className="flex space-x-4 mt-4 md:mt-0">
+            <a href="/privacy" className="text-sm text-gray-500 hover:text-white transition-colors duration-200">
+              Privacy Policy
+            </a>
+            <a href="/terms" className="text-sm text-gray-500 hover:text-white transition-colors duration-200">
+              Terms of Service
+            </a>
+          </div>
         </div>
       </div>
     </footer>
