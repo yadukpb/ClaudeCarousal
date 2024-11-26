@@ -1,15 +1,13 @@
 import React from 'react';
-import { Search } from 'lucide-react';
+import { Search, Home } from 'lucide-react';
 import { useParams, Link } from 'react-router-dom'
 
 const Navbar = () => (
-  <nav className="bg-white shadow-sm py-4">
+  <nav className="bg-white shadow-sm py-1">
     <div className="container mx-auto px-4 flex items-center justify-between">
       <Link to="/" className="flex items-center">
         <div className="text-red-600 mr-2">
-          <svg className="w-8 h-8" viewBox="0 0 24 24">
-            <path fill="currentColor" d="M12 2L1 12h3v9h6v-6h4v6h6v-9h3L12 2z" />
-          </svg>
+          <Home className="w-8 h-8" />
         </div>
         <div>
           <span className="text-xl font-serif">Lowlead</span>
@@ -26,24 +24,16 @@ const Navbar = () => (
 );
 
 const HeroSection = () => (
-  <div className="relative h-96 bg-gray-800">
-    <div className="absolute inset-0">
-      <img
-        src="/api/placeholder/1600/400"
-        alt="Hero background"
-        className="w-full h-full object-cover"
-      />
-      <div className="absolute inset-0 bg-gray-900 opacity-50"></div>
-    </div>
+  <div className="relative h-96">
     <div className="relative container mx-auto px-4 h-full flex items-center">
-      <div className="text-white">
-        <h1 className="text-4xl md:text-5xl font-serif mb-4">
-          Domestic Violence in California – How a Lawyer Can Help.
+      <div>
+        <h1 className="text-4xl md:text-5xl font-serif mb-4 text-gray-900">
+          All You Want To Know About Industrial Laws
         </h1>
         <div className="flex items-center text-sm">
-          <a href="#" className="hover:underline">Home</a>
-          <span className="mx-2">›</span>
-          <span>Domestic Violence in California – How a Lawyer Can Help.</span>
+          <Link to="/" className="text-gray-600 hover:underline">Home</Link>
+          <span className="mx-2 text-gray-600">›</span>
+          <span className="text-gray-600">Industrial Law</span>
         </div>
       </div>
     </div>
@@ -51,38 +41,55 @@ const HeroSection = () => (
 );
 
 const BlogContent = () => (
-  <div className="py-12">
+  <div className="py-4">
     <div className="container mx-auto px-4">
-      <div className="flex flex-col lg:flex-row gap-12">
+      <div className="flex flex-col lg:flex-row gap-8">
         <main className="lg:w-2/3">
           <article>
             <img
-              src="/api/placeholder/800/400"
-              alt="Blog post image"
-              className="w-full mb-8"
+              src="https://static.wixstatic.com/media/6d22d1_e866b25b60e345cca8f82bcae150f331~mv2.jpg"
+              alt="Industrial Laws"
+              className="w-full mb-4 rounded-xl"
             />
-            <div className="flex items-center mb-4">
+            <div className="flex items-center mb-3">
               <span className="text-gray-600">by</span>
-              <a href="#" className="text-red-600 mx-2">admin</a>
+              <span className="text-red-600 mx-2">Suyash</span>
               <span className="text-gray-400">|</span>
-              <a href="#" className="text-gray-600 ml-2">Attorney</a>
+              <span className="text-gray-600 ml-2">March 15, 2024</span>
             </div>
             <div className="prose max-w-none">
-              <p className="text-gray-600 mb-8">
-                Sed nec sapien eu nibh porta fringilla. Aenean in lectus id tellus tempus rutrum vitae a elit. 
-                Nulla sit amet interdum ligula. Duis bibendum porttitor tempus. Morbi nisi nisl, sagittis in enim at, 
-                tempus convallis magna.
+              <p className="text-gray-600 mb-4">
+                Industrial law, also known as labor law or employment law, plays a crucial role in governing the relationship between employers, employees, and labor unions. This comprehensive guide explores the key aspects of industrial laws and their impact on modern businesses.
               </p>
+              
+              <h2 className="text-2xl font-serif text-gray-900 mb-4">Key Components of Industrial Law</h2>
+              
+              <p className="text-gray-600 mb-4">
+                Industrial law encompasses various aspects including workplace safety regulations, minimum wage requirements, working hours, overtime compensation, and employee benefits. Understanding these components is essential for both employers and employees to maintain a harmonious work environment.
+              </p>
+
+              <h2 className="text-2xl font-serif text-gray-900 mb-4">Rights and Responsibilities</h2>
+              
+              <p className="text-gray-600 mb-4">
+                Employers must ensure compliance with workplace safety standards, fair compensation practices, and anti-discrimination policies. Employees, on the other hand, have rights to safe working conditions, fair wages, and protection against workplace discrimination and harassment.
+              </p>
+
+              <h2 className="text-2xl font-serif text-gray-900 mb-4">Dispute Resolution</h2>
+              
+              <p className="text-gray-600 mb-4">
+                Industrial laws provide frameworks for resolving workplace disputes through various mechanisms including mediation, arbitration, and legal proceedings. Understanding these processes helps both parties address conflicts effectively while maintaining professional relationships.
+              </p>
+
               <div className="flex items-center mt-8 border-t pt-8">
                 <img
-                  src="/api/placeholder/60/60"
+                  src=""
                   alt="Author"
                   className="w-16 h-16 rounded-full mr-4"
                 />
                 <div>
-                  <h3 className="text-xl font-serif text-gray-900">Bentin Ali Benilmal</h3>
+                  <h3 className="text-xl font-serif text-gray-900">Suyash</h3>
                   <p className="text-gray-600 mt-2">
-                    Phasellus ac consequat turpis, sit amet fermentum nulla. Donec
+                    Law Student at NLSIU, Bangalore
                   </p>
                 </div>
               </div>
@@ -140,42 +147,56 @@ const BlogContent = () => (
 
 const Comments = () => (
   <div className="container mx-auto px-4 py-12">
-    <h2 className="text-2xl font-serif mb-4">2 Comments</h2>
+    <h2 className="text-2xl font-serif mb-4">3 Comments</h2>
     <div className="space-y-8">
       <div className="flex">
-        <img src="/api/placeholder/60/60" alt="Commenter" className="w-16 h-16 rounded-full mr-4"/>
+        <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Commenter" className="w-16 h-16 rounded-full mr-4"/>
         <div>
           <div className="flex items-center mb-2">
-            <h3 className="font-medium">ThemesHadev</h3>
+            <h3 className="font-medium">Rajesh Sharma</h3>
+            <span className="text-gray-400 text-sm ml-2">2 days ago</span>
           </div>
-          <p className="text-gray-600 mb-2">test</p>
+          <p className="text-gray-600 mb-2">Very informative article on industrial laws. As an HR manager in Delhi, I find these insights particularly helpful for our manufacturing unit. Would love to see more content on employee welfare regulations.</p>
           <button className="text-gray-500 hover:text-gray-700">Reply</button>
         </div>
       </div>
 
       <div className="flex">
-        <img src="/api/placeholder/60/60" alt="Commenter" className="w-16 h-16 rounded-full mr-4"/>
+        <img src="https://randomuser.me/api/portraits/women/42.jpg" alt="Commenter" className="w-16 h-16 rounded-full mr-4"/>
         <div>
           <div className="flex items-center mb-2">
-            <h3 className="font-medium">ThemesHadev</h3>
+            <h3 className="font-medium">Priya Patel</h3>
+            <span className="text-gray-400 text-sm ml-2">1 day ago</span>
           </div>
-          <p className="text-gray-600 mb-2">Call us 24/7 at 869-5414-5 or fill out the form below to receive a free and confidential initial consultation.</p>
+          <p className="text-gray-600 mb-2">I recently dealt with a workplace dispute in my company in Mumbai. The section about dispute resolution mechanisms was extremely helpful. Could you please elaborate more on the recent amendments to the Industrial Relations Code?</p>
+          <button className="text-gray-500 hover:text-gray-700">Reply</button>
+        </div>
+      </div>
+
+      <div className="flex">
+        <img src="https://randomuser.me/api/portraits/men/22.jpg" alt="Commenter" className="w-16 h-16 rounded-full mr-4"/>
+        <div>
+          <div className="flex items-center mb-2">
+            <h3 className="font-medium">Amit Verma</h3>
+            <span className="text-gray-400 text-sm ml-2">5 hours ago</span>
+          </div>
+          <p className="text-gray-600 mb-2">As a small business owner from Bangalore, understanding these laws is crucial. The article provides good insights, but I would appreciate if you could cover compliance requirements for startups specifically.</p>
           <button className="text-gray-500 hover:text-gray-700">Reply</button>
         </div>
       </div>
     </div>
 
     <div className="mt-12">
-      <h2 className="text-2xl font-serif mb-4">Leave Comments</h2>
-      <p className="text-gray-600 mb-6">Nunc velit metus, volutpat elementum euismod eget, cursus nec nunc.</p>
+      <h2 className="text-2xl font-serif mb-4">Leave a Comment</h2>
       <form className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <input type="text" placeholder="Your Full Name" className="w-full p-3 bg-gray-50 border border-gray-200 rounded"/>
-          <input type="email" placeholder="info.lawlead@gmail.com" className="w-full p-3 bg-gray-50 border border-gray-200 rounded"/>
-          <input type="tel" placeholder="+55 (121) 234 444" className="w-full p-3 bg-gray-50 border border-gray-200 rounded"/>
-          <input type="text" placeholder="Enter Your Address" className="w-full p-3 bg-gray-50 border border-gray-200 rounded"/>
+          <input type="text" placeholder="Full Name" className="w-full p-3 bg-gray-50 border border-gray-200 rounded"/>
+          <input type="email" placeholder="Email Address" className="w-full p-3 bg-gray-50 border border-gray-200 rounded"/>
+          <input type="tel" placeholder="Mobile Number" className="w-full p-3 bg-gray-50 border border-gray-200 rounded"/>
+          <input type="text" placeholder="City" className="w-full p-3 bg-gray-50 border border-gray-200 rounded"/>
         </div>
-        <textarea placeholder="Write your comment here..." rows="6" className="w-full p-3 bg-gray-50 border border-gray-200 rounded"></textarea>
+        <textarea placeholder="Share your thoughts or questions..." rows="6" className="w-full p-3 bg-gray-50 border border-gray-200 rounded"></textarea>
+        <button type="submit" className="bg-red-600 text-white px-6 py-3 rounded hover:bg-red-700">Submit Comment</button>
       </form>
     </div>
   </div>

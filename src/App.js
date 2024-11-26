@@ -13,6 +13,7 @@ import BlogPage from './pages/BlogsPage'
 import BlogView from './pages/BlogView'
 import LawServices from './components/LawServices'
 import AboutUs from './pages/AboutUs'
+import ContactUs from './pages/ContactUs'
 
 const App = () => {
   return (
@@ -26,7 +27,6 @@ const App = () => {
                 <HeroSlider />
                 <LawServices />
                 <WhyChooseUs />
-                
                 <FAQ />
                 <BlogCards />
               </>
@@ -35,6 +35,7 @@ const App = () => {
             <Route path="/blog" element={<BlogPage />} />
             <Route path="/blog1" element={<BlogView />} />
             <Route path="/about" element={<AboutUs />} />
+            <Route path="/contact" element={<ContactUs />} />
           </Routes>
         </main>
         <Footer />

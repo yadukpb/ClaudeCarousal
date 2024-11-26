@@ -1,10 +1,17 @@
 import React from 'react';
 import { User, Calendar } from 'lucide-react';
 import Slider from 'react-slick';
+import { useNavigate } from 'react-router-dom';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 const BlogCards = () => {
+  const navigate = useNavigate();
+
+  const handleBlogClick = (blogId) => {
+    navigate(`/blog1`);
+  };
+
   const blogPosts = [
     {
       id: 1,
@@ -106,7 +113,7 @@ const BlogCards = () => {
         <div className="mx-[-16px] sm:mx-0">
           <Slider {...settings}>
             {blogPosts.map(post => (
-              <div key={post.id} className="px-4">
+              <div key={post.id} className="px-4" onClick={() => handleBlogClick(post.id)}>
                 <div className="group cursor-pointer">
                   <div className="mb-4 overflow-hidden rounded-2xl">
                     <img src={post.image} alt={post.title} className="w-full h-48 sm:h-64 object-cover transform transition-transform duration-300 group-hover:scale-110" />
