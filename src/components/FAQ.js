@@ -33,24 +33,24 @@ const FAQ = () => {
 
   const faqData = [
     {
-      question: "What types of business entities are there?",
-      answer: "Quisque nec iaculis nibh. Suspendisse tempus orci nec enim maximus the quis maximus quam suscipit. Fusce dignissim turpis eu neque vehicula condimentum. Morbi pretium orci sed elementum lacinia sapien leo facilisis quam, quis elementum risus nulla."
+      question: "What services do you provide for lawyers?",
+      answer: "We provide comprehensive legal research services, document drafting including pleadings and affidavits, case law summaries, precedent development, and customized legal updates. Our team from NLSIU offers focused research solutions to help lawyers manage their workload efficiently."
     },
     {
-      question: "Do I need legal advice just to form my business?",
-      answer: "While it's possible to form a business on your own, seeking legal advice can help ensure compliance with all regulations and protect your interests in the long run."
+      question: "How can you assist law students?",
+      answer: "We offer project review services, moot court preparation assistance, thesis guidance, and research support. While we don't complete assignments, we provide valuable feedback and guidance to help students improve their work quality and research skills."
     },
     {
-      question: "What should my attorney expect from me?",
-      answer: "Your attorney will expect honest communication, timely responses, complete documentation, and full disclosure of relevant information about your business situation."
+      question: "What is included in your free consultation?",
+      answer: "Our free 25-minute consultation allows you to discuss your legal needs, understand our services better, and explore how we can assist you. This session can be scheduled through our online booking system for a virtual meeting."
     },
     {
-      question: "What is the role of witness in court?",
-      answer: "A witness provides testimony under oath about facts related to a case, helping establish truth and providing evidence to support legal arguments."
+      question: "How do you support startups and corporations?",
+      answer: "We offer business structuring advice, contract drafting and review, lease agreement assistance, employment contract preparation, and e-commerce legal compliance support. Our services are designed to provide practical legal solutions for growing businesses."
     },
     {
-      question: "Does my business need a separate tax identification number?",
-      answer: "Most businesses require a separate tax ID (EIN) for tax filing and banking purposes, though some sole proprietorships can use the owner's SSN."
+      question: "What makes LegalEase Solutions unique?",
+      answer: "As NLSIU law students, we combine academic excellence with practical legal knowledge to provide high-quality, affordable legal assistance. Our platform specializes in thorough legal research, academic support, and corporate legal services with a client-centric approach."
     }
   ];
 

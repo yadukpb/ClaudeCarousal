@@ -1,6 +1,6 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import LawServices from './pages/LawServices'
+import LawServicePage from './pages/LawServicePage'
 import AboutSection from './components/AboutSection'
 import BlogCards from './BlogCards'
 import WhyChooseUs from './components/WhyChooseUs'
@@ -11,6 +11,7 @@ import FAQ from './components/FAQ'
 import StickyContact from './components/StickyContact'
 import BlogPage from './pages/BlogsPage'
 import BlogView from './pages/BlogView'
+import LawServices from './components/LawServices'
 
 const App = () => {
   return (
@@ -29,7 +30,7 @@ const App = () => {
                 <WhyChooseUs />
               </>
             } />
-            <Route path="/services" element={<LawServices />} />
+            <Route path="/services" element={<LawServicePage />} />
             <Route path="/blog" element={<BlogPage />} />
             <Route path="/blog1" element={<BlogView />} />
           </Routes>

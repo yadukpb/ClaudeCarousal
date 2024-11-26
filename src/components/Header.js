@@ -13,7 +13,6 @@ import { UserCircle } from 'lucide-react';
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [servicesDropdown, setServicesDropdown] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
@@ -43,15 +42,7 @@ const Header = () => {
 
   const navigationItems = [
     { name: 'HOME', href: '/' },
-    { 
-      name: 'SERVICES', 
-      href: '/services',
-      dropdownItems: [
-        { name: 'FOR CORPORATE', href: '/services/corporate' },
-        { name: 'FOR LAWYERS', href: '/services/lawyers' },
-        { name: 'FOR BUDDING LAWYERS', href: '/services/budding-lawyers' }
-      ]
-    },
+    { name: 'SERVICES', href: '/services' },
     { name: 'WORK WITH US', href: '/work-with-us' },
     { name: 'ABOUT US', href: '/about' },
     { name: 'BLOGS', href: '/blogs' },
@@ -77,27 +68,9 @@ const Header = () => {
                 {navigationItems[0].name}
               </a>
               
-              <div className="relative" onMouseEnter={() => setServicesDropdown(true)} onMouseLeave={() => setServicesDropdown(false)}>
-                <a href={navigationItems[1].href} className={navigationItems[1].className}>
-                  {navigationItems[1].name}
-                </a>
-                
-                {servicesDropdown && (
-                  <div className="absolute left-0 mt-2 w-56 rounded-lg shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-                    <div className="py-1">
-                      {navigationItems[1].dropdownItems.map((item) => (
-                        <a
-                          key={item.name}
-                          href={item.href}
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-[#EFE6DA] font-jost"
-                        >
-                          {item.name}
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
+              <a href={navigationItems[1].href} className={navigationItems[1].className}>
+                {navigationItems[1].name}
+              </a>
             </div>
             
             <div className="flex items-center space-x-12 ml-12">
@@ -184,19 +157,6 @@ const Header = () => {
                   >
                     {item.name}
                   </a>
-                  {item.dropdownItems && (
-                    <div className="ml-4">
-                      {item.dropdownItems.map((dropdownItem) => (
-                        <a
-                          key={dropdownItem.name}
-                          href={dropdownItem.href}
-                          className="block font-jost text-[14px] font-medium px-4 py-2 text-gray-600 hover:bg-[#EFE6DA] transition-all duration-300"
-                        >
-                          {dropdownItem.name}
-                        </a>
-                      ))}
-                    </div>
-                  )}
                 </div>
               ))}
             </div>
