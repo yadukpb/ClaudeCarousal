@@ -23,11 +23,11 @@ const ContactUs = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="relative h-[40vh] bg-gradient-to-r from-gray-900 to-gray-800">
+      <div className="relative h-[40vh] bg-gradient-to-r from-gray-900 to-gray-800 flex items-center justify-center">
         <div className="absolute inset-0 bg-black opacity-50"></div>
-        <div className="absolute inset-0 flex items-center justify-center">
+        <div className="w-full relative z-10">
           <div className="text-center">
-            <h1 className="text-4xl md:text-5xl text-white font-serif mb-4">Contact Us</h1>
+            <h1 className="text-4xl md:text-5xl text-white font-serif mb-2">Contact Us</h1>
             <p className="text-gray-200 text-lg max-w-2xl mx-auto px-4">
               Get in touch with our legal experts for personalized assistance and consultation
             </p>
@@ -35,7 +35,7 @@ const ContactUs = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-16">
+      <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           <div className="lg:col-span-2">
             <div className="bg-white rounded-xl shadow-lg p-8">
@@ -107,7 +107,7 @@ const ContactUs = () => {
                   <MapPin className="w-6 h-6 text-red-600 mt-1" />
                   <div>
                     <h4 className="font-medium text-gray-900">Address</h4>
-                    <p className="text-gray-600 mt-1">National Law School of India University, Bangalore</p>
+                    <p className="text-gray-600 mt-1">Gnana Bharathi Main Rd, Naagarabhaavi, Bengaluru, Karnataka 560072</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-4">
@@ -121,7 +121,7 @@ const ContactUs = () => {
                   <Mail className="w-6 h-6 text-red-600 mt-1" />
                   <div>
                     <h4 className="font-medium text-gray-900">Email</h4>
-                    <p className="text-gray-600 mt-1">info@legalease.solutions</p>
+                    <p className="text-gray-600 mt-1">info@clausecounselcraft.solutions</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-4">

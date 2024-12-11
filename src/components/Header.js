@@ -101,7 +101,8 @@ const Header = () => {
               <img 
                 src={isScrolled ? "/logo.png" : "/logo-nobg.png"}
                 alt="Logo" 
-                className="h-[90px] object-contain"
+                className="h-[90px] object-contain cursor-pointer"
+                onClick={() => window.location.href = '/'}
                 onError={(e) => console.log("Error loading image:", e.target.src)}
               />
             </div>
@@ -123,7 +124,8 @@ const Header = () => {
             <img 
               src={isScrolled ? "/logo.png" : "/logo-nobg.png"}
               alt="Logo" 
-              className="h-[60px] object-contain"
+              className="h-[60px] object-contain cursor-pointer"
+              onClick={() => window.location.href = '/'}
               onError={(e) => console.log("Error loading image:", e.target.src)}
             />
           </div>

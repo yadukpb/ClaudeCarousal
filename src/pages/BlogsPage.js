@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, Calendar, User, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -6,6 +6,20 @@ import { useNavigate } from 'react-router-dom';
 const BlogPage = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    try {
+      const userData = localStorage.getItem('userData')
+      if (userData) {
+        const parsedData = JSON.parse(userData)
+        setIsAdmin(parsedData.user?.role === 'admin')
+      }
+    } catch (error) {
+      console.error('Error parsing user data:', error)
+      setIsAdmin(false)
+    }
+  }, [])
 
   const blogPosts = [
     {
@@ -61,9 +75,19 @@ const BlogPage = () => {
             Legal Insights & Updates
           </h2>
           <div className="w-24 h-1 bg-amber-600 mx-auto mb-8"></div>
-          <p className="font-cormorant text-2xl text-[#4A4A4A] max-w-3xl mx-auto">
+          <p className="font-cormorant text-2xl text-[#4A4A4A] max-w-3xl mx-auto mb-8">
             Stay informed with our latest legal perspectives and analysis
           </p>
+          {isAdmin && (
+            <motion.button
+              initial={{opacity: 0, y: 20}}
+              animate={{opacity: 1, y: 0}}
+              onClick={() => navigate('/add-blog')}
+              className="bg-amber-600 text-white px-6 py-3 rounded-lg hover:bg-amber-700 transition-colors flex items-center gap-2 mx-auto"
+            >
+              Add Blog <ArrowRight size={16}/>
+            </motion.button>
+          )}
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -173,7 +197,7 @@ const BlogPage = () => {
               transition={{delay: 0.2}}
               className="bg-white p-6 rounded-xl shadow-lg border border-[#E8E8E8]"
             >
-              <h3 className="font-cormorant text-xl font-bold mb-6 pb-2 border-b-2 border-amber-600">Practice Areas</h3>
+              <h3 className="font-cormorant text-xl font-bold mb-6 pb-2 border-b-2 border-amber-600">Topics</h3>
               <div className="flex flex-wrap gap-2">
                 {tags.map(tag => (
                   <span 

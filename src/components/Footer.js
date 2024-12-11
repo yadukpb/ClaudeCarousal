@@ -1,7 +1,19 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Linkedin, Twitter, Facebook, Mail, Phone, MapPin } from 'lucide-react';
 
 const Footer = () => {
+  const navigate = useNavigate();
+
+  const handleServiceClick = (e, href) => {
+    e.preventDefault();
+    navigate(href);
+    setTimeout(() => {
+      const element = document.getElementById('corporate-section');
+      element?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  };
+
   const quickLinks = [
     { title: 'Home', href: '/' },
     { title: 'About Us', href: '/about' },
@@ -12,18 +24,16 @@ const Footer = () => {
   ];
 
   const services = [
-    { title: 'For Corporates', href: '/services/corporate' },
+    { title: 'For Corporates', href: '/services', scrollTo: 'corporate-section' },
     { title: 'For Lawyers', href: '/services/lawyers' },
     { title: 'For Law Students', href: '/services/students' },
-    { title: 'Legal Research', href: '/services/research' },
-    { title: 'Document Drafting', href: '/services/drafting' },
     { title: 'Free Consultation', href: '/consultation' },
   ];
 
   const contactInfo = [
-    { Icon: Mail, text: 'info@legalease.solutions', href: 'mailto:info@legalease.solutions' },
+    { Icon: Mail, text: 'info@clausecounselcraft.solutions', href: 'mailto:info@clausecounselcraft.com' },
     { Icon: Phone, text: '+91 XXXXX XXXXX', href: 'tel:+91XXXXXXXXXX' },
-    { Icon: MapPin, text: 'National Law School of India University, Bangalore', href: '#' }
+    { Icon: MapPin, text: 'Gnana Bharathi Main Rd, Naagarabhaavi, Bengaluru, Karnataka 560072', href: '#' }
   ];
 
   const socialLinks = [
@@ -39,12 +49,10 @@ const Footer = () => {
           <div className="flex flex-col space-y-6">
             <img 
               src="/logo.png" 
-              alt="LegalEase Solutions" 
+              alt="ClauseCounselCraft" 
               className="h-auto w-auto"
             />
-            <p className="text-sm">
-              Leveraging Learning, Lifting Lives. Empowering legal professionals and businesses with comprehensive research and support services.
-            </p>
+            
           </div>
 
           <div>
@@ -71,6 +79,7 @@ const Footer = () => {
                   <a 
                     href={service.href}
                     className="hover:text-white transition-colors duration-200"
+                    onClick={(e) => service.scrollTo ? handleServiceClick(e, service.href) : null}
                   >
                     {service.title}
                   </a>
@@ -115,7 +124,7 @@ const Footer = () => {
 
         <div className="mt-16 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm text-gray-500">
-            © {new Date().getFullYear()} LegalEase Solutions. All Rights Reserved
+            © {new Date().getFullYear()} ClauseCounselCraft. All Rights Reserved
           </p>
           <div className="flex space-x-4 mt-4 md:mt-0">
             <a href="/privacy" className="text-sm text-gray-500 hover:text-white transition-colors duration-200">

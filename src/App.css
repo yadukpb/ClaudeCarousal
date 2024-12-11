@@ -313,3 +313,40 @@
     padding: 12px;
   }
 }
+.ql-editor {
+  min-height: 350px !important;
+}
+
+.ql-container {
+  min-height: 350px !important;
+}
+
+.ql-toolbar {
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+}
+
+.ql-container {
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+}
+
+
+.MuiDialog-paper {
+  margin: 16px !important;
+}
+
+@media (min-width: 600px) {
+  .MuiDialog-paper {
+    margin: 32px !important;
+  }
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
