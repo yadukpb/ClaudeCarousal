@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { MessageCircle, X } from 'lucide-react';
 import { Dialog, Transition } from '@headlessui/react';
+import { BACKEND_URL } from '../constants'
 
 const StickyContact = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -135,50 +136,50 @@ const StickyContact = () => {
   };
 
   const handleFormSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
-      const consultationData = {
-        ...formData,
-        date: selectedDate.toISOString(),
-        time: selectedConsultationTime,
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
-      }
-      
-      const response = await fetch(process.env.REACT_APP_API_URL + '/schedule-consultation', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify(consultationData),
-        credentials: 'include'
-      })
+        const consultationData = {
+            ...formData,
+            date: selectedDate.toISOString(),
+            time: selectedConsultationTime,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+        };
 
-      if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.message || 'Failed to schedule consultation')
-      }
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/consultation/schedule-consultation`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(consultationData),
+            credentials: 'include'
+        });
 
-      const result = await response.json()
-      setIsOpen(false)
-      setFormData({
-        name: '',
-        profession: '',
-        contact: '',
-        question: ''
-      })
-      
-      if (typeof window !== 'undefined' && window.gtag) {
-        window.gtag('event', 'consultation_scheduled', {
-          event_category: 'Engagement',
-          event_label: 'Legal Consultation'
-        })
-      }
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || 'Failed to schedule consultation');
+        }
+
+        const result = await response.json();
+        setIsOpen(false);
+        setFormData({
+            name: '',
+            profession: '',
+            contact: '',
+            question: ''
+        });
+
+        if (typeof window !== 'undefined' && window.gtag) {
+            window.gtag('event', 'consultation_scheduled', {
+                event_category: 'Engagement',
+                event_label: 'Legal Consultation'
+            });
+        }
     } catch (error) {
-      console.error('Error scheduling consultation:', error)
-      alert('Failed to schedule consultation. Please try again later.')
+        console.error('Error scheduling consultation:', error);
+        alert('Failed to schedule consultation. Please try again later.');
     }
-  }
+  };
 
   const handleInputChange = (e) => {
     setFormData({

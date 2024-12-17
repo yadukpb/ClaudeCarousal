@@ -1,83 +1,96 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Button, Accordion, AccordionSummary, AccordionDetails, Typography, IconButton } from '@mui/material'
+import { Button, Accordion, AccordionSummary, AccordionDetails, Typography, IconButton, TextField } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import CloseIcon from '@mui/icons-material/Close'
+import EditIcon from '@mui/icons-material/Edit'
+import SaveIcon from '@mui/icons-material/Save'
 import { useNavigate } from 'react-router-dom'
+import { BACKEND_URL } from '../constants'
 
-const ServiceDetail = ({ service, onClose }) => {
+const ServiceDetail = ({ serviceId, onClose, isAdmin }) => {
+  const [service, setService] = useState(null)
   const [expanded, setExpanded] = useState(false)
   const navigate = useNavigate()
 
-  const serviceData = {
-    title: service.title,
-    subtitle: service.description,
-    description: `Professional ${service.title} services tailored to your specific needs. Our expert team ensures comprehensive solutions with attention to detail and compliance with legal requirements.`,
-    documentsNeeded: [
-      "Valid ID Proof",
-      "Business Registration Documents",
-      "Tax Registration Details",
-      "Previous Legal Documents",
-      "Relevant Correspondence",
-      "Supporting Evidence",
-      "Authorization Letters",
-      "Power of Attorney (if applicable)"
-    ],
-    whyChooseUs: [
-      "Expert Legal Team",
-      "Customized Solutions",
-      "Timely Delivery",
-      "Competitive Pricing",
-      "Comprehensive Support",
-      "Confidentiality Assured"
-    ],
-    faqs: [
-      {
-        question: `What is the typical timeline for ${service.title}?`,
-        answer: "Timeline varies based on complexity, typically 2-4 weeks for standard cases."
-      },
-      {
-        question: "What is included in the service?",
-        answer: "Our service includes initial consultation, document preparation, legal review, and implementation support."
-      },
-      {
-        question: "How do you ensure quality?",
-        answer: "We follow a rigorous review process and maintain strict quality standards throughout the service delivery."
-      },
-      {
-        question: "What are the payment terms?",
-        answer: "We offer flexible payment plans with an initial retainer and milestone-based payments."
-      }
-    ],
+  const [serviceData, setServiceData] = useState({
+    title: '',
+    description: '',
+    isEditing: false
+  })
+
+  const [editableData, setEditableData] = useState({
+    documentsNeeded: [],
+    whyChooseUs: [],
+    faqs: [],
     pricing: {
       basic: {
-        price: "₹15,000",
-        features: [
-          "Initial Consultation",
-          "Basic Documentation",
-          "Standard Processing"
-        ]
+        title: 'Basic Plan',
+        price: '₹15,000',
+        features: [],
+        isEditing: false
       },
       standard: {
-        price: "₹25,000",
-        features: [
-          "All Basic Features",
-          "Priority Processing",
-          "3 Month Support",
-          "Detailed Analysis"
-        ]
+        title: 'Standard Plan',
+        price: '₹25,000',
+        features: [],
+        isEditing: false
       },
       premium: {
-        price: "₹40,000",
-        features: [
-          "All Standard Features",
-          "Express Processing",
-          "6 Month Support",
-          "Dedicated Manager",
-          "Quarterly Review"
-        ]
+        title: 'Premium Plan',
+        price: '₹40,000',
+        features: [],
+        isEditing: false
+      }
+    },
+    isDescriptionEditing: false,
+    isDocumentsEditing: false,
+    isWhyChooseUsEditing: false
+  })
+
+  useEffect(() => {
+    const fetchServiceDetails = async () => {
+      try {
+        const response = await fetch(`${BACKEND_URL}/services/${serviceId}`)
+        const data = await response.json()
+        setService(data)
+        setServiceData({
+          title: data.title,
+          description: data.description,
+          isEditing: false,
+        })
+        setEditableData({
+          documentsNeeded: data.documentsNeeded || [],
+          whyChooseUs: data.whyChooseUs || [],
+          faqs: data.faqs || [],
+          pricing: data.pricing || {
+            basic: { title: 'Basic Plan', price: '₹15,000', features: [] },
+            standard: { title: 'Standard Plan', price: '₹25,000', features: [] },
+            premium: { title: 'Premium Plan', price: '₹40,000', features: [] },
+          },
+          isDescriptionEditing: false,
+          isDocumentsEditing: false,
+          isWhyChooseUsEditing: false,
+        })
+      } catch (error) {
+        console.error('Error fetching service details:', error)
       }
     }
+
+    if (serviceId) {
+      fetchServiceDetails()
+    }
+  }, [serviceId])
+
+  const toggleServiceEdit = () => {
+    if (!isAdmin) return
+    setServiceData(prev => ({ ...prev, isEditing: !prev.isEditing }))
+  }
+
+  const updateServiceData = (field, value) => {
+    setServiceData(prev => ({
+      ...prev,
+      [field]: value
+    }))
   }
 
   const handleScheduleMeeting = () => {
@@ -85,146 +98,361 @@ const ServiceDetail = ({ service, onClose }) => {
     onClose()
   }
 
+  const toggleEdit = (field) => {
+    setEditableData(prev => ({
+      ...prev,
+      [field]: !prev[field]
+    }))
+  }
+
+  const toggleFaqEdit = (index) => {
+    setEditableData(prev => ({
+      ...prev,
+      faqs: prev.faqs.map((faq, i) => 
+        i === index ? { ...faq, isEditing: !faq.isEditing } : faq
+      )
+    }))
+  }
+
+  const togglePricingEdit = (plan) => {
+    setEditableData(prev => ({
+      ...prev,
+      pricing: {
+        ...prev.pricing,
+        [plan]: {
+          ...prev.pricing[plan],
+          isEditing: !prev.pricing[plan].isEditing
+        }
+      }
+    }))
+  }
+
+  const updateFaq = (index, field, value) => {
+    setEditableData(prev => ({
+      ...prev,
+      faqs: prev.faqs.map((faq, i) => 
+        i === index ? { ...faq, [field]: value } : faq
+      )
+    }))
+  }
+
+  const updatePricing = (plan, field, value) => {
+    setEditableData(prev => ({
+      ...prev,
+      pricing: {
+        ...prev.pricing,
+        [plan]: {
+          ...prev.pricing[plan],
+          [field]: value
+        }
+      }
+    }))
+  }
+
+  const addFaq = () => {
+    setEditableData(prev => ({
+      ...prev,
+      faqs: [...prev.faqs, {
+        question: "New Question",
+        answer: "New Answer",
+        isEditing: true
+      }]
+    }))
+  }
+
+  const removeFaq = (index) => {
+    setEditableData(prev => ({
+      ...prev,
+      faqs: prev.faqs.filter((_, i) => i !== index)
+    }))
+  }
+
+  const addPricingFeature = (plan) => {
+    setEditableData(prev => ({
+      ...prev,
+      pricing: {
+        ...prev.pricing,
+        [plan]: {
+          ...prev.pricing[plan],
+          features: [...prev.pricing[plan].features, "New Feature"]
+        }
+      }
+    }))
+  }
+
+  const removePricingFeature = (plan, index) => {
+    setEditableData(prev => ({
+      ...prev,
+      pricing: {
+        ...prev.pricing,
+        [plan]: {
+          ...prev.pricing[plan],
+          features: prev.pricing[plan].features.filter((_, i) => i !== index)
+        }
+      }
+    }))
+  }
+
+  const updatePricingTitle = (plan, value) => {
+    setEditableData(prev => ({
+      ...prev,
+      pricing: {
+        ...prev.pricing,
+        [plan]: {
+          ...prev.pricing[plan],
+          title: value
+        }
+      }
+    }))
+  }
+
   return (
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="relative max-h-[90vh] overflow-y-auto bg-gray-50 p-6 scrollbar-hide rounded-[40px]"
+      className="relative max-h-[90vh] overflow-y-auto bg-gray-50 rounded-[40px]"
     >
-      <IconButton
-        onClick={onClose}
-        className="absolute right-12 top-8 z-10 bg-white shadow-md hover:bg-gray-100"
-        sx={{ 
-          color: '#1A1A1A',
-          width: '48px',
-          height: '48px',
-          '&:hover': {
-            backgroundColor: '#f3f4f6',
-            transform: 'scale(1.05)'
-          },
-          transition: 'all 0.2s ease-in-out'
-        }}
-      >
-        <CloseIcon />
-      </IconButton>
-
-      <div className="sticky top-0 z-10 bg-gray-50 pt-4 pb-6 mb-8">
-        <div className="text-center">
-          <h1 className="font-cormorant text-5xl sm:text-6xl font-bold text-[#1A1A1A] mb-3">
-            {serviceData.title}
-          </h1>
-          <p className="font-cormorant text-2xl sm:text-3xl text-[#B8860B]">
-            {serviceData.subtitle}
-          </p>
-        </div>
-
-        <div className="bg-white rounded-3xl shadow-xl p-8 mt-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2">
-              <p className="text-lg text-[#4A4A4A] leading-relaxed">{serviceData.description}</p>
+      {service ? (
+        <div className="motion-div h-full overflow-y-auto">
+          <div className="sticky top-16 z-10 bg-gray-50 pt-4 pb-6 mb-8">
+            <div className="text-center px-4">
+              {serviceData.isEditing ? (
+                <div className="space-y-4">
+                  <TextField
+                    fullWidth
+                    value={serviceData.title}
+                    onChange={(e) => updateServiceData('title', e.target.value)}
+                    variant="outlined"
+                    label="Service Title"
+                  />
+                  <TextField
+                    fullWidth
+                    value={serviceData.description}
+                    onChange={(e) => updateServiceData('description', e.target.value)}
+                    variant="outlined"
+                    label="Service Description"
+                    multiline
+                    rows={2}
+                  />
+                  {isAdmin && (
+                    <IconButton onClick={toggleServiceEdit} className="absolute right-4 top-4">
+                      <SaveIcon />
+                    </IconButton>
+                  )}
+                </div>
+              ) : (
+                <>
+                  <h1 className="font-cormorant text-5xl sm:text-6xl font-bold text-[#1A1A1A] mb-3">
+                    {serviceData.title}
+                  </h1>
+                  <p className="font-cormorant text-2xl sm:text-3xl text-[#B8860B] mb-8">
+                    {serviceData.description}
+                  </p>
+                  {isAdmin && (
+                    <IconButton onClick={toggleServiceEdit} className="absolute right-4 top-4">
+                      <EditIcon />
+                    </IconButton>
+                  )}
+                </>
+              )}
             </div>
-            <div className="lg:col-span-1">
+            
+            <div className="w-full bg-white shadow-lg border-t border-b border-[#E8E8E8]">
+              <div className="max-w-7xl mx-auto px-4 py-8 relative">
+                {editableData.isDescriptionEditing ? (
+                  <div className="space-y-4">
+                    <TextField
+                      fullWidth
+                      multiline
+                      rows={4}
+                      value={editableData.description}
+                      onChange={(e) => setEditableData(prev => ({ ...prev, description: e.target.value }))}
+                      variant="outlined"
+                    />
+                    {isAdmin && <IconButton onClick={() => toggleEdit('isDescriptionEditing')}><SaveIcon /></IconButton>}
+                  </div>
+                ) : (
+                  <>
+                    <p className="text-lg text-[#4A4A4A] leading-relaxed text-center">
+                      {editableData.description}
+                    </p>
+                    {isAdmin && <IconButton onClick={() => toggleEdit('isDescriptionEditing')} className="absolute right-2 top-2"><EditIcon /></IconButton>}
+                  </>
+                )}
+              </div>
+            </div>
+            
+            <div className="w-full max-w-3xl mx-auto mt-8 px-4">
               <Button
+                onClick={handleScheduleMeeting}
                 variant="contained"
                 fullWidth
-                onClick={handleScheduleMeeting}
                 sx={{
-                  py: 2.5,
-                  bgcolor: '#B8860B',
-                  fontSize: '1.2rem',
+                  backgroundColor: '#B8860B',
+                  color: 'white',
+                  padding: '16px',
+                  fontSize: '18px',
+                  fontWeight: 'bold',
                   borderRadius: '16px',
                   textTransform: 'none',
-                  boxShadow: '0 4px 14px rgba(184, 134, 11, 0.25)',
-                  '&:hover': { 
-                    bgcolor: '#986f0a',
-                    boxShadow: '0 6px 20px rgba(184, 134, 11, 0.35)'
-                  }
+                  '&:hover': {
+                    backgroundColor: '#986f0a',
+                    transform: 'scale(1.02)'
+                  },
+                  transition: 'all 0.2s ease-in-out'
                 }}
               >
-                Schedule a Free Consultation
+                Schedule a Free 25 Min Session
               </Button>
             </div>
           </div>
-        </div>
-      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-        {Object.entries(serviceData.pricing).map(([plan, details]) => (
-          <div key={plan} className="bg-white rounded-3xl p-6 shadow-xl transform hover:scale-105 transition-transform duration-300">
-            <h3 className="font-cormorant text-2xl font-bold capitalize mb-4 text-center">
-              {plan} Plan
-            </h3>
-            <div className="text-center mb-6">
-              <span className="text-3xl font-bold text-[#B8860B]">{details.price}</span>
-            </div>
-            <ul className="space-y-3">
-              {details.features.map((feature, index) => (
-                <li key={index} className="flex items-center text-base">
-                  <span className="material-symbols-outlined mr-3 text-[#B8860B]">done</span>
-                  {feature}
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-        <div className="bg-white rounded-3xl p-8 shadow-xl">
-          <h2 className="font-cormorant text-2xl font-bold mb-6">Required Documents</h2>
-          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {serviceData.documentsNeeded.map((doc, index) => (
-              <li key={index} className="flex items-center p-3 bg-gray-50 rounded-xl">
-                <span className="material-symbols-outlined mr-3 text-[#B8860B]">description</span>
-                {doc}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="bg-white rounded-3xl p-8 shadow-xl">
-          <h2 className="font-cormorant text-2xl font-bold mb-6">Why Choose Us</h2>
-          <div className="grid grid-cols-1 gap-4">
-            {serviceData.whyChooseUs.map((reason, index) => (
-              <div key={index} className="flex items-center p-3 bg-gray-50 rounded-xl">
-                <span className="material-symbols-outlined mr-3 text-[#B8860B]">check_circle</span>
-                {reason}
+          <div className="px-4">
+            <div className="mt-8">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+                {Object.entries(editableData.pricing).map(([plan, details]) => (
+                  <div key={plan} className="bg-white rounded-3xl p-6 shadow-xl relative">
+                    {details.isEditing ? (
+                      <div className="space-y-4">
+                        <TextField
+                          fullWidth
+                          label="Plan Title"
+                          value={details.title || plan}
+                          onChange={(e) => updatePricingTitle(plan, e.target.value)}
+                        />
+                        <TextField
+                          fullWidth
+                          label="Price"
+                          value={details.price}
+                          onChange={(e) => updatePricing(plan, 'price', e.target.value)}
+                        />
+                        {details.features.map((feature, idx) => (
+                          <div key={idx} className="flex items-center gap-2">
+                            <TextField
+                              fullWidth
+                              label={`Feature ${idx + 1}`}
+                              value={feature}
+                              onChange={(e) => updatePricing(plan, 'features', details.features.map((f, i) => i === idx ? e.target.value : f))}
+                            />
+                            <IconButton onClick={() => removePricingFeature(plan, idx)} color="error">
+                              <span className="material-symbols-outlined">delete</span>
+                            </IconButton>
+                          </div>
+                        ))}
+                        {isAdmin && (
+                          <div className="flex justify-between mt-4">
+                            <IconButton onClick={() => addPricingFeature(plan)} color="primary">
+                              <span className="material-symbols-outlined">add_circle</span>
+                            </IconButton>
+                            <IconButton onClick={() => togglePricingEdit(plan)}><SaveIcon /></IconButton>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <>
+                        <h3 className="font-cormorant text-2xl font-bold capitalize mb-4 text-center">
+                          {details.title || `${plan} Plan`}
+                        </h3>
+                        <div className="text-center mb-6">
+                          <span className="text-3xl font-bold text-[#B8860B]">{details.price}</span>
+                        </div>
+                        <ul className="space-y-3">
+                          {details.features.map((feature, index) => (
+                            <li key={index} className="flex items-center text-base">
+                              <span className="material-symbols-outlined mr-3 text-[#B8860B]">done</span>
+                              {feature}
+                            </li>
+                          ))}
+                        </ul>
+                        {isAdmin && <IconButton onClick={() => togglePricingEdit(plan)} className="absolute right-2 top-2"><EditIcon /></IconButton>}
+                      </>
+                    )}
+                  </div>
+                ))}
               </div>
-            ))}
+
+              <div className="bg-white rounded-3xl p-8 shadow-xl mb-8">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="font-cormorant text-2xl font-bold">
+                    Frequently Asked Questions
+                  </h2>
+                  {isAdmin && (
+                    <IconButton onClick={addFaq} color="primary">
+                      <span className="material-symbols-outlined">add_circle</span>
+                    </IconButton>
+                  )}
+                </div>
+                {editableData.faqs.map((faq, index) => (
+                  <Accordion
+                    key={index}
+                    expanded={expanded === index}
+                    onChange={() => setExpanded(expanded === index ? false : index)}
+                    sx={{ 
+                      mb: 2, 
+                      '&:before': { display: 'none' },
+                      borderRadius: '12px',
+                      overflow: 'hidden',
+                      boxShadow: 'none',
+                      border: '1px solid #eee'
+                    }}
+                  >
+                    {faq.isEditing ? (
+                      <div className="p-4 space-y-4">
+                        <TextField
+                          fullWidth
+                          label="Question"
+                          value={faq.question}
+                          onChange={(e) => updateFaq(index, 'question', e.target.value)}
+                        />
+                        <TextField
+                          fullWidth
+                          multiline
+                          rows={4}
+                          label="Answer"
+                          value={faq.answer}
+                          onChange={(e) => updateFaq(index, 'answer', e.target.value)}
+                        />
+                        <div className="flex justify-between">
+                          <IconButton onClick={() => removeFaq(index)} color="error">
+                            <span className="material-symbols-outlined">delete</span>
+                          </IconButton>
+                          <IconButton onClick={() => toggleFaqEdit(index)}><SaveIcon /></IconButton>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <AccordionSummary 
+                          expandIcon={<ExpandMoreIcon />}
+                          sx={{ backgroundColor: 'rgba(184, 134, 11, 0.03)' }}
+                        >
+                          <Typography className="font-semibold">{faq.question}</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                          <Typography className="text-[#4A4A4A]">{faq.answer}</Typography>
+                        </AccordionDetails>
+                        {isAdmin && (
+                          <div className="absolute right-2 top-2 flex">
+                            <IconButton onClick={() => removeFaq(index)} color="error">
+                              <span className="material-symbols-outlined">delete</span>
+                            </IconButton>
+                            <IconButton onClick={() => toggleFaqEdit(index)}><EditIcon /></IconButton>
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </Accordion>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-
-      <div className="bg-white rounded-3xl p-8 shadow-xl">
-        <h2 className="font-cormorant text-2xl font-bold mb-6">
-          Frequently Asked Questions
-        </h2>
-        {serviceData.faqs.map((faq, index) => (
-          <Accordion
-            key={index}
-            expanded={expanded === index}
-            onChange={() => setExpanded(expanded === index ? false : index)}
-            sx={{ 
-              mb: 2, 
-              '&:before': { display: 'none' },
-              borderRadius: '12px',
-              overflow: 'hidden',
-              boxShadow: 'none',
-              border: '1px solid #eee'
-            }}
-          >
-            <AccordionSummary 
-              expandIcon={<ExpandMoreIcon />}
-              sx={{ backgroundColor: 'rgba(184, 134, 11, 0.03)' }}
-            >
-              <Typography className="font-semibold">{faq.question}</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Typography className="text-[#4A4A4A]">{faq.answer}</Typography>
-            </AccordionDetails>
-          </Accordion>
-        ))}
-      </div>
+      ) : (
+        <div className="flex items-center justify-center h-full">
+          <span className="material-symbols-outlined animate-spin text-4xl text-[#B8860B]">
+            hourglass_empty
+          </span>
+        </div>
+      )}
     </motion.div>
   )
 }

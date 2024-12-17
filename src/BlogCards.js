@@ -4,37 +4,52 @@ import Slider from 'react-slick';
 import { useNavigate } from 'react-router-dom';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { TextField, IconButton } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import SaveIcon from '@mui/icons-material/Save';
 
 const BlogCards = () => {
   const navigate = useNavigate();
+  const [blogPosts, setBlogPosts] = React.useState([]);
+  const [headerData, setHeaderData] = React.useState({
+    subtitle: 'Legal News & Updates',
+    isEditing: false
+  });
+  const [isAdmin, setIsAdmin] = React.useState(false);
+
+  React.useEffect(() => {
+    const fetchBlogs = async () => {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/blogs`);
+      const data = await response.json();
+      setBlogPosts(data.map(post => ({
+        id: post._id,
+        title: post.title,
+        author: post.author.name,
+        date: new Date(post.createdAt).toLocaleDateString(),
+        image: post.imageUrl
+      })));
+    };
+    fetchBlogs();
+    checkAdminStatus();
+  }, []);
+
+  const checkAdminStatus = () => {
+    const encryptedTokens = localStorage.getItem('tokens');
+    const userData = localStorage.getItem('userData');
+    if (encryptedTokens && userData) {
+      try {
+        const user = JSON.parse(userData).user;
+        setIsAdmin(user.role === 'admin');
+        setHeaderData(prev => ({ ...prev, isEditing: user.role === 'admin' }));
+      } catch (error) {
+        setIsAdmin(false);
+      }
+    }
+  };
 
   const handleBlogClick = (blogId) => {
     navigate(`/blog1`);
   };
-
-  const blogPosts = [
-    {
-      id: 1,
-      title: 'Criminal Law is vary hard to fight and win',
-      author: 'Ayush Mathur',
-      date: 'June 15 2024',
-      image: 'https://20231019.fs1.hubspotusercontent-na1.net/hubfs/20231019/students-lining-in-class-RF5KQ7Z.jpg'
-    },
-    {
-      id: 2,
-      title: 'Capitalize hanging fruit to identify ballpark',
-      author: 'Yadu',
-      date: 'May 15 2023',
-      image: 'https://20231019.fs1.hubspotusercontent-na1.net/hubfs/20231019/people-knowledge-education-and-school-concept-QCAJ47T.jpg'
-    },
-    {
-      id: 3,
-      title: 'With A Company Based In Slovenia You Can Work',
-      author: 'Heth',
-      date: 'November 15 2021',
-      image: 'https://20231019.fs1.hubspotusercontent-na1.net/hubfs/20231019/image-of-happy-mixed-race-students-communicate-dur-MM48Y6K.jpg'
-    }
-  ];
 
   const CustomArrow = ({ direction, onClick }) => (
     <button
@@ -93,6 +108,13 @@ const BlogCards = () => {
     ]
   };
 
+  const toggleHeaderEdit = () => {
+    setHeaderData({
+      ...headerData,
+      isEditing: !headerData.isEditing
+    });
+  };
+
   return (
     <div className="w-full bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-12 sm:pt-24 pb-10 sm:pb-20">
@@ -105,10 +127,38 @@ const BlogCards = () => {
           </div>
         </div>
 
-        <h2 className="font-['Jost'] text-2xl sm:text-[32px] leading-tight sm:leading-[32px] text-[#343842] font-normal mb-4 sm:mb-6">Legal News & Updates</h2>
-        <p className="text-gray-600 text-base sm:text-lg mb-10 sm:mb-20 max-w-3xl">
-          Stay informed with our latest legal insights, case studies, and industry updates from our expert attorneys.
-        </p>
+        {headerData.isEditing ? (
+          <div className="space-y-4">
+            <TextField
+              fullWidth
+              value={headerData.subtitle}
+              onChange={(e) => setHeaderData({...headerData, subtitle: e.target.value})}
+              variant="outlined"
+              label="Subtitle"
+            />
+          </div>
+        ) : (
+          <h2 className="font-['Jost'] text-2xl sm:text-[32px] leading-tight sm:leading-[32px] text-[#343842] font-normal mb-4 sm:mb-6">{headerData.subtitle}</h2>
+        )}
+        {isAdmin && (
+          <IconButton 
+            onClick={toggleHeaderEdit}
+            className="absolute right-0 top-0"
+          >
+            {headerData.isEditing ? <SaveIcon /> : <EditIcon />}
+          </IconButton>
+        )}
+        {headerData.isEditing ? (
+          <TextField
+            fullWidth
+            value={headerData.subtitle}
+            onChange={(e) => setHeaderData({...headerData, subtitle: e.target.value})}
+            variant="outlined"
+            label="Subtitle"
+          />
+        ) : (
+          <p className="text-gray-600 text-base sm:text-lg mb-10 sm:mb-20 max-w-3xl">{headerData.subtitle}</p>
+        )}
 
         <div className="mx-[-16px] sm:mx-0">
           <Slider {...settings}>
@@ -131,11 +181,6 @@ const BlogCards = () => {
                   <h3 className="font-['Hepta_Slab'] text-lg sm:text-xl font-semibold mb-4 group-hover:text-orange-500 transition-colors duration-200">
                     {post.title}
                   </h3>
-                  <div className="flex items-center text-orange-500">
-                    <svg className="w-5 h-5 transform transition-transform duration-200 group-hover:translate-x-2" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                    </svg>
-                  </div>
                 </div>
               </div>
             ))}

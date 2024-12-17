@@ -1,5 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { MapPin, Phone, Mail, Clock } from 'lucide-react'
+import { BACKEND_URL } from '../constants'
+import EditIcon from '@mui/icons-material/Edit'
+import SaveIcon from '@mui/icons-material/Save'
+import { IconButton, TextField } from '@mui/material'
+import CryptoJS from 'crypto-js'
 
 const ContactUs = () => {
   const [formData, setFormData] = useState({
@@ -9,6 +14,56 @@ const ContactUs = () => {
     subject: '',
     message: ''
   })
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [pageData, setPageData] = useState({
+    title: 'Contact Us',
+    subtitle: 'Get in touch with our legal experts for personalized assistance and consultation',
+    address: 'Gnana Bharathi Main Rd, Naagarabhaavi, Bengaluru, Karnataka 560072',
+    phone: '+91 XXXXX XXXXX',
+    email: 'info@clausecounselcraft.solutions',
+    workingHours: 'Mon - Fri: 9:00 AM - 6:00 PM',
+    consultationTitle: 'Free Consultation',
+    consultationText: 'Book a free 25-minute consultation with our legal experts to discuss your needs',
+    isEditing: false
+  })
+  const [loading, setLoading] = useState(true)
+
+  const checkAdminStatus = () => {
+    const encryptedTokens = localStorage.getItem('tokens')
+    const userData = localStorage.getItem('userData')
+    if (encryptedTokens && userData) {
+      try {
+        const user = JSON.parse(userData).user
+        setIsAdmin(user.role === 'admin')
+      } catch (error) {
+        setIsAdmin(false)
+      }
+    }
+  }
+
+  const fetchPageData = async () => {
+    setLoading(true)
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/contact`)
+      const { data } = await response.json()
+      if (data) {
+        setPageData({
+          ...pageData,
+          ...data,
+          isEditing: false
+        })
+      }
+    } catch (error) {
+      console.error('Error fetching contact page data:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchPageData()
+    checkAdminStatus()
+  }, [])
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -21,16 +76,78 @@ const ContactUs = () => {
     })
   }
 
+  const toggleEdit = async () => {
+    if (!isAdmin) return
+    if (pageData.isEditing) {
+      try {
+        const encryptedTokens = localStorage.getItem('tokens')
+        const key = process.env.REACT_APP_ENCRYPTION_KEY
+        const decryptedBytes = CryptoJS.AES.decrypt(encryptedTokens, key)
+        const { accessToken } = JSON.parse(decryptedBytes.toString(CryptoJS.enc.Utf8))
+
+        const response = await fetch(`${BACKEND_URL}/api/contact`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`
+          },
+          body: JSON.stringify(pageData)
+        })
+        if (!response.ok) throw new Error('Failed to update contact page')
+        fetchPageData()
+      } catch (error) {
+        console.error('Error updating contact page:', error)
+      }
+    }
+    setPageData(prev => ({ ...prev, isEditing: !prev.isEditing }))
+  }
+
   return (
     <div className="min-h-screen bg-white">
       <div className="relative h-[40vh] bg-gradient-to-r from-gray-900 to-gray-800 flex items-center justify-center">
-        <div className="absolute inset-0 bg-black opacity-50"></div>
         <div className="w-full relative z-10">
           <div className="text-center">
-            <h1 className="text-4xl md:text-5xl text-white font-serif mb-2">Contact Us</h1>
-            <p className="text-gray-200 text-lg max-w-2xl mx-auto px-4">
-              Get in touch with our legal experts for personalized assistance and consultation
-            </p>
+            {pageData.isEditing ? (
+              <>
+                <TextField
+                  fullWidth
+                  value={pageData.title}
+                  onChange={(e) => setPageData({...pageData, title: e.target.value})}
+                  variant="outlined"
+                  label="Title"
+                  className="text-white mb-4"
+                  InputProps={{
+                    className: "text-white"
+                  }}
+                />
+                <TextField
+                  fullWidth
+                  multiline
+                  rows={2}
+                  value={pageData.subtitle}
+                  onChange={(e) => setPageData({...pageData, subtitle: e.target.value})}
+                  variant="outlined"
+                  label="Subtitle"
+                  className="text-white"
+                  InputProps={{
+                    className: "text-white"
+                  }}
+                />
+              </>
+            ) : (
+              <>
+                <h1 className="text-4xl md:text-5xl text-white font-serif mb-2">{pageData.title}</h1>
+                <p className="text-gray-200 text-lg max-w-2xl mx-auto px-4">{pageData.subtitle}</p>
+              </>
+            )}
+            {isAdmin && (
+              <IconButton 
+                onClick={toggleEdit}
+                className="absolute right-4 top-4 text-white"
+              >
+                {pageData.isEditing ? <SaveIcon /> : <EditIcon />}
+              </IconButton>
+            )}
           </div>
         </div>
       </div>
@@ -100,50 +217,126 @@ const ContactUs = () => {
           </div>
 
           <div className="space-y-8">
-            <div className="bg-white rounded-xl shadow-lg p-8">
+            <div className="bg-white rounded-xl shadow-lg p-8 relative">
               <h3 className="text-2xl font-serif text-gray-900 mb-6">Contact Information</h3>
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
                   <MapPin className="w-6 h-6 text-red-600 mt-1" />
                   <div>
                     <h4 className="font-medium text-gray-900">Address</h4>
-                    <p className="text-gray-600 mt-1">Gnana Bharathi Main Rd, Naagarabhaavi, Bengaluru, Karnataka 560072</p>
+                    {pageData.isEditing ? (
+                      <TextField
+                        fullWidth
+                        value={pageData.address}
+                        onChange={(e) => setPageData({...pageData, address: e.target.value})}
+                        variant="outlined"
+                        label="Address"
+                      />
+                    ) : (
+                      <p className="text-gray-600 mt-1">{pageData.address}</p>
+                    )}
                   </div>
                 </div>
                 <div className="flex items-start space-x-4">
                   <Phone className="w-6 h-6 text-red-600 mt-1" />
                   <div>
                     <h4 className="font-medium text-gray-900">Phone</h4>
-                    <p className="text-gray-600 mt-1">+91 XXXXX XXXXX</p>
+                    {pageData.isEditing ? (
+                      <TextField
+                        fullWidth
+                        value={pageData.phone}
+                        onChange={(e) => setPageData({...pageData, phone: e.target.value})}
+                        variant="outlined"
+                        label="Phone"
+                      />
+                    ) : (
+                      <p className="text-gray-600 mt-1">{pageData.phone}</p>
+                    )}
                   </div>
                 </div>
                 <div className="flex items-start space-x-4">
                   <Mail className="w-6 h-6 text-red-600 mt-1" />
                   <div>
                     <h4 className="font-medium text-gray-900">Email</h4>
-                    <p className="text-gray-600 mt-1">info@clausecounselcraft.solutions</p>
+                    {pageData.isEditing ? (
+                      <TextField
+                        fullWidth
+                        value={pageData.email}
+                        onChange={(e) => setPageData({...pageData, email: e.target.value})}
+                        variant="outlined"
+                        label="Email"
+                      />
+                    ) : (
+                      <p className="text-gray-600 mt-1">{pageData.email}</p>
+                    )}
                   </div>
                 </div>
                 <div className="flex items-start space-x-4">
                   <Clock className="w-6 h-6 text-red-600 mt-1" />
                   <div>
                     <h4 className="font-medium text-gray-900">Working Hours</h4>
-                    <p className="text-gray-600 mt-1">Mon - Fri: 9:00 AM - 6:00 PM</p>
+                    {pageData.isEditing ? (
+                      <TextField
+                        fullWidth
+                        value={pageData.workingHours}
+                        onChange={(e) => setPageData({...pageData, workingHours: e.target.value})}
+                        variant="outlined"
+                        label="Working Hours"
+                      />
+                    ) : (
+                      <p className="text-gray-600 mt-1">{pageData.workingHours}</p>
+                    )}
                   </div>
                 </div>
               </div>
+              {isAdmin && (
+                <IconButton 
+                  onClick={toggleEdit}
+                  className="absolute right-2 top-2"
+                >
+                  {pageData.isEditing ? <SaveIcon /> : <EditIcon />}
+                </IconButton>
+              )}
             </div>
 
-            <div className="bg-white rounded-xl shadow-lg p-8">
-              <h3 className="text-2xl font-serif text-gray-900 mb-6">Free Consultation</h3>
-              <p className="text-gray-600 mb-6">
-                Book a free 25-minute consultation with our legal experts to discuss your needs
-              </p>
+            <div className="bg-white rounded-xl shadow-lg p-8 relative">
+              {pageData.isEditing ? (
+                <TextField
+                  fullWidth
+                  value={pageData.consultationTitle}
+                  onChange={(e) => setPageData({...pageData, consultationTitle: e.target.value})}
+                  variant="outlined"
+                  label="Consultation Title"
+                />
+              ) : (
+                <h3 className="text-2xl font-serif text-gray-900 mb-6">{pageData.consultationTitle}</h3>
+              )}
+              {pageData.isEditing ? (
+                <TextField
+                  fullWidth
+                  multiline
+                  rows={4}
+                  value={pageData.consultationText}
+                  onChange={(e) => setPageData({...pageData, consultationText: e.target.value})}
+                  variant="outlined"
+                  label="Consultation Text"
+                />
+              ) : (
+                <p className="text-gray-600 mb-6">{pageData.consultationText}</p>
+              )}
               <button
                 className="w-full bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors duration-300"
               >
                 Schedule Now
               </button>
+              {isAdmin && (
+                <IconButton 
+                  onClick={toggleEdit}
+                  className="absolute right-2 top-2"
+                >
+                  {pageData.isEditing ? <SaveIcon /> : <EditIcon />}
+                </IconButton>
+              )}
             </div>
           </div>
         </div>

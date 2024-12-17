@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Upload, X } from 'lucide-react';
+import { BACKEND_URL } from '../constants';
+import CryptoJS from 'crypto-js';
+
 
 const AddBlog = () => {
   const navigate = useNavigate();
@@ -35,6 +38,15 @@ const AddBlog = () => {
     }
   }, [navigate]);
 
+  useEffect(() => {
+    if (!process.env.REACT_APP_ENCRYPTION_KEY) {
+      throw new Error('Encryption key not found in environment variables');
+    }
+    if (!BACKEND_URL) {
+      throw new Error('Backend URL not found');
+    }
+  }, []);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -64,8 +76,19 @@ const AddBlog = () => {
 
   const refreshToken = async () => {
     try {
-      const tokens = JSON.parse(localStorage.getItem('tokens'))
-      const response = await fetch('http://localhost:4001/auth/refresh', {
+      const encryptedTokens = localStorage.getItem('tokens');
+      if (!encryptedTokens) {
+        throw new Error('No tokens found');
+      }
+
+      const decryptedTokens = CryptoJS.AES.decrypt(
+        encryptedTokens,
+        process.env.REACT_APP_ENCRYPTION_KEY
+      ).toString(CryptoJS.enc.Utf8);
+      
+      const tokens = JSON.parse(decryptedTokens);
+      
+      const response = await fetch(`${BACKEND_URL}/auth/refresh`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -73,66 +96,89 @@ const AddBlog = () => {
         body: JSON.stringify({
           refreshToken: tokens.refreshToken
         })
-      })
+      });
 
-      if (response.ok) {
-        const newTokens = await response.json()
-        localStorage.setItem('tokens', JSON.stringify(newTokens))
-        return newTokens.accessToken
+      if (!response.ok) {
+        throw new Error('Token refresh failed');
       }
-      throw new Error('Token refresh failed')
+
+      const newTokens = await response.json();
+      const encryptedNewTokens = CryptoJS.AES.encrypt(
+        JSON.stringify(newTokens),
+        process.env.REACT_APP_ENCRYPTION_KEY
+      ).toString();
+
+      localStorage.setItem('tokens', encryptedNewTokens);
+      return newTokens.accessToken;
     } catch (error) {
-      localStorage.removeItem('tokens')
-      localStorage.removeItem('userData')
-      navigate('/login')
-      throw error
+      console.error('Token refresh error:', error);
+      localStorage.removeItem('tokens');
+      localStorage.removeItem('userData');
+      throw error;
     }
-  }
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setIsLoading(true)
+    e.preventDefault();
+    setIsLoading(true);
 
     try {
-      const tokens = JSON.parse(localStorage.getItem('tokens'))
-      const formDataToSend = new FormData()
-      
+      if (!formData.image) {
+        throw new Error('Image is required');
+      }
+
+      const formDataToSend = new FormData();
       Object.keys(formData).forEach(key => {
         if (formData[key] !== null) {
-          formDataToSend.append(key, formData[key])
+          formDataToSend.append(key, formData[key]);
         }
-      })
+      });
 
-      let response = await fetch('http://localhost:4001/blogs', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${tokens.accessToken}`
-        },
-        body: formDataToSend
-      })
+      let response;
+      try {
+        const encryptedTokens = localStorage.getItem('tokens');
+        if (!encryptedTokens) throw new Error('No tokens found');
+        
+        const decryptedTokens = CryptoJS.AES.decrypt(
+          encryptedTokens,
+          process.env.REACT_APP_ENCRYPTION_KEY
+        ).toString(CryptoJS.enc.Utf8);
+        
+        const tokens = JSON.parse(decryptedTokens);
+        let accessToken = tokens.accessToken;
 
-      if (response.status === 401) {
-        const newAccessToken = await refreshToken()
-        response = await fetch('http://localhost:4001/blogs', {
+        response = await fetch(`${BACKEND_URL}/api/blogs`, {
           method: 'POST',
           headers: {
-            Authorization: `Bearer ${newAccessToken}`
+            Authorization: `Bearer ${accessToken}`
           },
           body: formDataToSend
-        })
-      }
+        });
 
-      if (response.ok) {
-        navigate('/blog')
-      } else {
-        throw new Error('Failed to create blog')
+        if (response.status === 401) {
+          accessToken = await refreshToken();
+          response = await fetch(`${BACKEND_URL}/api/blogs`, {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${accessToken}`
+            },
+            body: formDataToSend
+          });
+        }
+
+        if (!response.ok) throw new Error(await response.text() || 'Failed to create blog');
+
+        const result = await response.json();
+        navigate('/blog');
+      } catch (error) {
+        throw error;
       }
     } catch (error) {
-      console.error('Error creating blog:', error)
+      alert(error.message);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 pt-28 pb-12">
@@ -164,14 +210,34 @@ const AddBlog = () => {
                   required
                 >
                   <option value="">Select Category</option>
-                  <option value="Industrial Law">Industrial Law</option>
-                  <option value="Financial Law">Financial Law</option>
-                  <option value="Insurance Law">Insurance Law</option>
-                  <option value="Criminal Law">Criminal Law</option>
-                  <option value="Family Law">Family Law</option>
+                  <option value="Administrative Law">Administrative Law</option>
+                  <option value="Bankruptcy Law">Bankruptcy Law</option>
                   <option value="Business Law">Business Law</option>
-                  <option value="Real Estate">Real Estate</option>
                   <option value="Civil Rights">Civil Rights</option>
+                  <option value="Constitutional Law">Constitutional Law</option>
+                  <option value="Contract Law">Contract Law</option>
+                  <option value="Corporate Law">Corporate Law</option>
+                  <option value="Criminal Law">Criminal Law</option>
+                  <option value="Employment Law">Employment Law</option>
+                  <option value="Environmental Law">Environmental Law</option>
+                  <option value="Family Law">Family Law</option>
+                  <option value="Financial Law">Financial Law</option>
+                  <option value="Healthcare Law">Healthcare Law</option>
+                  <option value="Immigration Law">Immigration Law</option>
+                  <option value="Industrial Law">Industrial Law</option>
+                  <option value="Insurance Law">Insurance Law</option>
+                  <option value="Intellectual Property">Intellectual Property</option>
+                  <option value="International Law">International Law</option>
+                  <option value="Labor Law">Labor Law</option>
+                  <option value="Maritime Law">Maritime Law</option>
+                  <option value="Media Law">Media Law</option>
+                  <option value="Personal Injury">Personal Injury</option>
+                  <option value="Property Law">Property Law</option>
+                  <option value="Real Estate">Real Estate</option>
+                  <option value="Securities Law">Securities Law</option>
+                  <option value="Tax Law">Tax Law</option>
+                  <option value="Technology Law">Technology Law</option>
+                  <option value="Trust and Estate">Trust and Estate</option>
                 </select>
               </div>
 

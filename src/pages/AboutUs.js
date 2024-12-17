@@ -4,13 +4,15 @@ import { IconButton, TextField } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit'
 import SaveIcon from '@mui/icons-material/Save'
 import CryptoJS from 'crypto-js'
+import { BACKEND_URL } from '../constants'
+import StickyContact from '../components/StickyContact'
 
 const VisionMission = ({ title, content, isVision, isEditing, onEdit, isAdmin }) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true }}
-    className="bg-white rounded-xl p-8 shadow-lg border border-[#E8E8E8] relative"
+    className={`bg-white rounded-xl p-8 shadow-lg border border-[#E8E8E8] relative ${isVision ? 'h-96' : 'h-auto'}`}
   >
     {isEditing ? (
       <div className="space-y-4">
@@ -43,6 +45,22 @@ const VisionMission = ({ title, content, isVision, isEditing, onEdit, isAdmin })
                 label={`Point ${index + 1}`}
               />
             ))}
+            <div className="flex justify-end space-x-2">
+              <button
+                onClick={() => onEdit('content', [...content, ''], 'add')}
+                className="bg-green-500 text-white px-4 py-2 rounded"
+              >
+                Add Point
+              </button>
+              {content.length > 1 && (
+                <button
+                  onClick={() => onEdit('content', content.slice(0, -1), 'remove')}
+                  className="bg-red-500 text-white px-4 py-2 rounded"
+                >
+                  Remove Point
+                </button>
+              )}
+            </div>
           </div>
         )}
       </div>
@@ -214,103 +232,165 @@ const AboutUs = () => {
     isEditing: false
   })
 
-  useEffect(() => {
-    const checkAdminStatus = () => {
-      const encryptedUser = localStorage.getItem('user')
-      if (encryptedUser) {
-        try {
-          const key = process.env.REACT_APP_ENCRYPTION_KEY
-          const decryptedBytes = CryptoJS.AES.decrypt(encryptedUser, key)
-          const userString = decryptedBytes.toString(CryptoJS.enc.Utf8)
-          const user = JSON.parse(userString)
-          setIsAdmin(user.role === 'admin')
-        } catch (error) {
-          setIsAdmin(false)
-        }
+  const [isOpen, setIsOpen] = useState(false)
+
+  const checkAdminStatus = () => {
+    const encryptedTokens = localStorage.getItem('tokens')
+    const userData = localStorage.getItem('userData')
+    if (encryptedTokens && userData) {
+      try {
+        const user = JSON.parse(userData).user
+        setIsAdmin(user.role === 'admin')
+      } catch (error) {
+        setIsAdmin(false)
       }
-    }
-
-    checkAdminStatus()
-  }, [])
-
-  const toggleEdit = (section, id = null) => {
-    if (!isAdmin) return
-
-    switch (section) {
-      case 'header':
-        setHeaderData(prev => ({ ...prev, isEditing: !prev.isEditing }))
-        break
-      case 'vision':
-        setVisionMissionData(prev => ({
-          ...prev,
-          vision: { ...prev.vision, isEditing: !prev.vision.isEditing }
-        }))
-        break
-      case 'mission':
-        setVisionMissionData(prev => ({
-          ...prev,
-          mission: { ...prev.mission, isEditing: !prev.mission.isEditing }
-        }))
-        break
-      case 'founders':
-        if (id) {
-          setFoundersData(prev => ({
-            ...prev,
-            founders: prev.founders.map(f =>
-              f.id === id ? { ...f, isEditing: !f.isEditing } : f
-            )
-          }))
-        } else {
-          setFoundersData(prev => ({ ...prev, isEditing: !prev.isEditing }))
-        }
-        break
-      case 'consultation':
-        setConsultationData(prev => ({ ...prev, isEditing: !prev.isEditing }))
-        break
-      default:
-        break
     }
   }
 
-  const handleVisionMissionEdit = (section, field, value, index) => {
-    setVisionMissionData(prev => ({
-      ...prev,
-      [section]: {
-        ...prev[section],
-        [field]: field === 'content' && Array.isArray(prev[section].content) 
-          ? prev[section].content.map((item, i) => i === index ? value : item)
-          : value
-      }
-    }));
-  };
+  useEffect(() => {
+    checkAdminStatus()
+  }, [])
 
-  const handleFounderEdit = (id, field, value) => {
+  const saveSection = async (section, data) => {
+    if (!isAdmin) return
+
+    try {
+      const encryptedTokens = localStorage.getItem('tokens')
+      const key = process.env.REACT_APP_ENCRYPTION_KEY
+      const decryptedBytes = CryptoJS.AES.decrypt(encryptedTokens, key)
+      const { accessToken } = JSON.parse(decryptedBytes.toString(CryptoJS.enc.Utf8))
+
+      const response = await fetch(`${BACKEND_URL}/api/about/${section}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify(data)
+      })
+
+      if (!response.ok) throw new Error(`Failed to update ${section}`)
+      
+    } catch (error) {
+      console.error(`Error updating ${section}:`, error)
+    }
+  }
+
+  const toggleHeaderEdit = async () => {
+    if (!isAdmin) return
+
+    if (headerData.isEditing) {
+      await saveSection('header', {
+        title: headerData.title,
+        subtitle: headerData.subtitle
+      })
+    }
+    
+    setHeaderData(prev => ({ ...prev, isEditing: !prev.isEditing }))
+  }
+
+  const toggleFoundersHeaderEdit = async () => {
+    if (!isAdmin) return
+
+    if (foundersHeaderData.isEditing) {
+      await saveSection('founders-header', {
+        title: foundersHeaderData.title
+      })
+    }
+    
+    setFoundersHeaderData(prev => ({ ...prev, isEditing: !prev.isEditing }))
+  }
+
+  const handleFounderEdit = async (id, field, value) => {
     setFoundersData(prev => ({
       ...prev,
       founders: prev.founders.map(founder =>
         founder.id === id ? { ...founder, [field]: value } : founder
       )
-    }));
-  };
+    }))
+  }
 
-  const toggleFoundersHeaderEdit = () => {
-    if (!isAdmin) return;
-    setFoundersHeaderData(prev => ({ ...prev, isEditing: !prev.isEditing }));
-  };
+  const toggleFounderEdit = async (id) => {
+    if (!isAdmin) return
 
-  const toggleConsultationEdit = () => {
-    if (!isAdmin) return;
-    setConsultationData(prev => ({ ...prev, isEditing: !prev.isEditing }));
-  };
+    const founder = foundersData.founders.find(f => f.id === id)
+    
+    if (founder.isEditing) {
+      await saveSection('founders', {
+        id: founder.id,
+        name: founder.name,
+        role: founder.role,
+        email: founder.email,
+        image: founder.image
+      })
+    }
+
+    setFoundersData(prev => ({
+      ...prev,
+      founders: prev.founders.map(f =>
+        f.id === id ? { ...f, isEditing: !f.isEditing } : f
+      )
+    }))
+  }
+
+  const toggleConsultationEdit = async () => {
+    if (!isAdmin) return
+
+    if (consultationData.isEditing) {
+      await saveSection('consultation', {
+        title: consultationData.title,
+        description: consultationData.description,
+        buttonText: consultationData.buttonText,
+        image: consultationData.image
+      })
+    }
+    
+    setConsultationData(prev => ({ ...prev, isEditing: !prev.isEditing }))
+  }
+
+  const toggleVisionMissionEdit = async (section) => {
+    if (!isAdmin) return
+
+    if (visionMissionData[section].isEditing) {
+      await saveSection(section, {
+        title: visionMissionData[section].title,
+        content: visionMissionData[section].content
+      })
+    }
+
+    setVisionMissionData(prev => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        isEditing: !prev[section].isEditing
+      }
+    }))
+  }
+
+  const handleVisionMissionEdit = (section, field, value, action) => {
+    setVisionMissionData(prev => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        [field]: action === 'add'
+          ? [...prev[section].content, value]
+          : action === 'remove'
+            ? prev[section].content.slice(0, -1)
+            : field === 'content' && !Array.isArray(value)
+              ? prev[section].content.map((item, i) => i === value ? value : item)
+              : value
+      }
+    }))
+  }
 
   return (
-    <div className="bg-gradient-to-b from-slate-50 to-slate-100 py-28">
+    <div className="bg-gradient-to-b from-slate-50 to-slate-100 py-20">
       <div className="max-w-7xl mx-auto px-6">
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-20 relative"
+          className="text-center mb-20 relative pt-12"
         >
           {headerData.isEditing ? (
             <div className="space-y-4">
@@ -342,7 +422,7 @@ const AboutUs = () => {
           )}
           {isAdmin && (
             <IconButton 
-              onClick={() => toggleEdit('header')}
+              onClick={() => toggleHeaderEdit()}
               className="absolute right-0 top-0"
             >
               {headerData.isEditing ? <SaveIcon /> : <EditIcon />}
@@ -350,9 +430,23 @@ const AboutUs = () => {
           )}
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-20">
-          <VisionMission title="Our Vision" content="To become the go-to platform for affordable and reliable legal assistance, empowering lawyers, law students, start-ups, corporations and the wide array of people who reach out to us with high-quality research, insights, and support to excel in their professional, academic and legal pursuits." isVision={true} isEditing={visionMissionData.vision.isEditing} onEdit={(field, value) => handleVisionMissionEdit('vision', field, value)} isAdmin={isAdmin} />
-          <VisionMission title="Our Mission" content={visionMissionData.mission.content} isVision={false} isEditing={visionMissionData.mission.isEditing} onEdit={(field, value, index) => handleVisionMissionEdit('mission', field, value, index)} isAdmin={isAdmin} />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+          <VisionMission 
+            title={visionMissionData.vision.title}
+            content={visionMissionData.vision.content}
+            isVision={true}
+            isEditing={visionMissionData.vision.isEditing}
+            onEdit={(field, value) => handleVisionMissionEdit('vision', field, value)}
+            isAdmin={isAdmin}
+          />
+          <VisionMission
+            title={visionMissionData.mission.title}
+            content={visionMissionData.mission.content}
+            isVision={false}
+            isEditing={visionMissionData.mission.isEditing}
+            onEdit={(field, value, index) => handleVisionMissionEdit('mission', field, value, index)}
+            isAdmin={isAdmin}
+          />
         </div>
 
         <motion.div
@@ -404,7 +498,7 @@ const AboutUs = () => {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="bg-white rounded-xl p-8 shadow-xl border border-[#E8E8E8] transform hover:shadow-2xl transition-shadow duration-300 relative"
+          className="bg-white rounded-xl p-8 shadow-xl border border-[#E8E8E8] transform hover:shadow-2xl transition-shadow duration-300 relative mb-16"
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             {consultationData.isEditing ? (
@@ -472,7 +566,10 @@ const AboutUs = () => {
                   <p className="text-[#4A4A4A] text-lg leading-relaxed mb-8">
                     {consultationData.description}
                   </p>
-                  <button className="bg-amber-600 text-white px-10 py-4 rounded-lg hover:bg-amber-700 transition-colors duration-300 w-fit text-lg font-semibold shadow-lg hover:shadow-xl">
+                  <button
+                    onClick={() => setIsOpen(true)}
+                    className="bg-amber-600 text-white px-10 py-4 rounded-lg hover:bg-amber-700 transition-colors duration-300 w-fit text-lg font-semibold shadow-lg hover:shadow-xl"
+                  >
                     {consultationData.buttonText}
                   </button>
                 </>
@@ -489,6 +586,8 @@ const AboutUs = () => {
           )}
         </motion.div>
       </div>
+
+      <StickyContact isOpen={isOpen} setIsOpen={setIsOpen} />
     </div>
   );
 };

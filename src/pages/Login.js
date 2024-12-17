@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import CryptoJS from 'crypto-js'
+import { BACKEND_URL } from '../constants'
 
 const Login = () => {
   const navigate = useNavigate()

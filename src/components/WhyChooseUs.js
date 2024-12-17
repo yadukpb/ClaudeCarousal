@@ -10,99 +10,170 @@ import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import { IconButton, TextField } from '@mui/material';
 import CryptoJS from 'crypto-js';
+import { BACKEND_URL } from '../constants';
 
 const WhyChooseUs = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [headerData, setHeaderData] = useState({
-    title: "Why Choose ClauseCraft Counsel?",
-    subtitle: "Empowering legal excellence through research, expertise, and innovation",
+    title: "",
+    subtitle: "",
     isEditing: false
   });
-
-  const [features, setFeatures] = useState([
-    {
-      id: 1,
-      icon: <GavelIcon sx={{ fontSize: 32, color: '#fff' }} />,
-      title: "Legal Innovation",
-      description: "Leveraging cutting-edge technology and innovative approaches to deliver efficient and modern legal solutions.",
-      isEditing: false
-    },
-    {
-      id: 2,
-      icon: <SearchIcon sx={{ fontSize: 32, color: '#fff' }} />,
-      title: "Research Expertise",
-      description: "Providing comprehensive legal research support to lawyers, helping them manage workload efficiently and meet deadlines.",
-      isEditing: false
-    },
-    {
-      id: 3,
-      icon: <SchoolIcon sx={{ fontSize: 32, color: '#fff' }} />,
-      title: "Academic Support",
-      description: "Offering specialized assistance for law students with projects, moots, and research papers through guided mentorship.",
-      isEditing: false
-    },
-    {
-      id: 4,
-      icon: <BusinessIcon sx={{ fontSize: 32, color: '#fff' }} />,
-      title: "Corporate Solutions",
-      description: "Delivering practical legal solutions for startups and corporations, from business structuring to compliance management.",
-      isEditing: false
-    },
-    {
-      id: 5,
-      icon: <BalanceIcon sx={{ fontSize: 32, color: '#fff' }} />,
-      title: "Ethical Practice",
-      description: "Maintaining highest standards of legal ethics and professional conduct while delivering exceptional results for our clients.",
-      isEditing: false
-    },
-    {
-      id: 6,
-      icon: <SupportAgentIcon sx={{ fontSize: 32, color: '#fff' }} />,
-      title: "24/7 Support",
-      description: "Round-the-clock availability for urgent legal matters ensuring timely assistance when you need it most.",
-      isEditing: false
-    }
-  ]);
+  const [features, setFeatures] = useState([]);
+  const [shouldFetchData, setShouldFetchData] = useState(true);
 
   useEffect(() => {
-    const checkAdminStatus = () => {
-      const encryptedUser = localStorage.getItem('user');
-      if (encryptedUser) {
-        try {
-          const key = process.env.REACT_APP_ENCRYPTION_KEY;
-          const decryptedBytes = CryptoJS.AES.decrypt(encryptedUser, key);
-          const userString = decryptedBytes.toString(CryptoJS.enc.Utf8);
-          const user = JSON.parse(userString);
-          setIsAdmin(user.role === 'admin');
-        } catch (error) {
-          setIsAdmin(false);
-        }
-      }
-    };
-
+    if (shouldFetchData) {
+      fetchData();
+      setShouldFetchData(false);
+    }
     checkAdminStatus();
-  }, []);
+  }, [shouldFetchData]);
 
-  const handleFeatureEdit = (id, field, value) => {
-    setFeatures(prevFeatures =>
-      prevFeatures.map(feature =>
-        feature.id === id ? { ...feature, [field]: value } : feature
-      )
-    );
+  const fetchData = async () => {
+    try {
+      const tokens = localStorage.getItem('tokens');
+      const decryptedTokens = CryptoJS.AES.decrypt(
+        tokens,
+        process.env.REACT_APP_ENCRYPTION_KEY
+      ).toString(CryptoJS.enc.Utf8);
+      
+      const { accessToken } = JSON.parse(decryptedTokens);
+      
+      const response = await fetch(`${BACKEND_URL}/api/why-choose-us`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      });
+      const { data } = await response.json();
+      setHeaderData({
+        title: data.header.title,
+        subtitle: data.header.subtitle,
+        isEditing: false
+      });
+      
+      const iconMap = {
+        GavelIcon: <GavelIcon />,
+        SearchIcon: <SearchIcon />,
+        SchoolIcon: <SchoolIcon />,
+        BusinessIcon: <BusinessIcon />,
+        BalanceIcon: <BalanceIcon />,
+        SupportAgentIcon: <SupportAgentIcon />
+      };
+      
+      setFeatures(data.features.map(f => ({ 
+        ...f, 
+        isEditing: false,
+        icon: iconMap[f.icon]
+      })));
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  const saveHeader = async () => {
+    try {
+      const tokens = localStorage.getItem('tokens');
+      const decryptedTokens = CryptoJS.AES.decrypt(
+        tokens,
+        process.env.REACT_APP_ENCRYPTION_KEY
+      ).toString(CryptoJS.enc.Utf8);
+      
+      const { accessToken } = JSON.parse(decryptedTokens);
+      
+      const response = await fetch(`${BACKEND_URL}/api/why-choose-us/header`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify({
+          title: headerData.title,
+          subtitle: headerData.subtitle
+        })
+      });
+      if (response.ok) {
+        toggleHeaderEdit();
+        setShouldFetchData(true);
+      }
+    } catch (error) {
+      console.error('Error saving header:', error);
+    }
+  };
+
+  const saveFeature = async (id) => {
+    try {
+      const tokens = localStorage.getItem('tokens');
+      const decryptedTokens = CryptoJS.AES.decrypt(
+        tokens,
+        process.env.REACT_APP_ENCRYPTION_KEY
+      ).toString(CryptoJS.enc.Utf8);
+      
+      const { accessToken } = JSON.parse(decryptedTokens);
+      
+      const feature = features.find(f => f._id === id);
+      const response = await fetch(`${BACKEND_URL}/api/why-choose-us/feature/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify({
+          title: feature.title,
+          description: feature.description
+        })
+      });
+      if (response.ok) {
+        toggleFeatureEdit(id);
+        setShouldFetchData(true);
+      }
+    } catch (error) {
+      console.error('Error saving feature:', error);
+    }
+  };
+
+  const checkAdminStatus = () => {
+    const encryptedTokens = localStorage.getItem('tokens')
+    const userData = localStorage.getItem('userData')
+    if (encryptedTokens && userData) {
+      try {
+        const user = JSON.parse(userData).user
+        setIsAdmin(user.role === 'admin')
+      } catch (error) {
+        setIsAdmin(false)
+      }
+    }
+  }
+
+  const toggleHeaderEdit = () => {
+    if (!isAdmin) return;
+    if (headerData.isEditing) {
+      saveHeader();
+    } else {
+      setHeaderData(prev => ({ ...prev, isEditing: true }));
+    }
   };
 
   const toggleFeatureEdit = (id) => {
     if (!isAdmin) return;
-    setFeatures(prevFeatures =>
-      prevFeatures.map(feature =>
-        feature.id === id ? { ...feature, isEditing: !feature.isEditing } : feature
-      )
-    );
+    const feature = features.find(f => f._id === id);
+    if (feature.isEditing) {
+      saveFeature(id);
+    } else {
+      setFeatures(prevFeatures =>
+        prevFeatures.map(f =>
+          f._id === id ? { ...f, isEditing: true } : f
+        )
+      );
+    }
   };
 
-  const toggleHeaderEdit = () => {
-    if (!isAdmin) return;
-    setHeaderData(prev => ({ ...prev, isEditing: !prev.isEditing }));
+  const handleFeatureEdit = (id, field, value) => {
+    setFeatures(prevFeatures =>
+      prevFeatures.map(f =>
+        f._id === id ? { ...f, [field]: value } : f
+      )
+    );
   };
 
   return (
@@ -153,10 +224,10 @@ const WhyChooseUs = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {features.map((feature) => (
             <motion.div
-              key={feature.id}
+              key={feature._id}
               initial={{opacity: 0, y: 20}}
               animate={{opacity: 1, y: 0}}
-              transition={{delay: feature.id * 0.1}}
+              transition={{delay: feature._id * 0.1}}
               whileHover={{y: -5, scale: 1.02}}
               className="bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-[#E8E8E8] relative"
             >
@@ -168,7 +239,7 @@ const WhyChooseUs = () => {
                   <TextField
                     fullWidth
                     value={feature.title}
-                    onChange={(e) => handleFeatureEdit(feature.id, 'title', e.target.value)}
+                    onChange={(e) => handleFeatureEdit(feature._id, 'title', e.target.value)}
                     variant="outlined"
                   />
                   <TextField
@@ -176,12 +247,12 @@ const WhyChooseUs = () => {
                     multiline
                     rows={4}
                     value={feature.description}
-                    onChange={(e) => handleFeatureEdit(feature.id, 'description', e.target.value)}
+                    onChange={(e) => handleFeatureEdit(feature._id, 'description', e.target.value)}
                     variant="outlined"
                   />
                   {isAdmin && (
                     <IconButton 
-                      onClick={() => toggleFeatureEdit(feature.id)} 
+                      onClick={() => toggleFeatureEdit(feature._id)}
                       className="absolute right-2 top-2"
                     >
                       <SaveIcon />
@@ -198,7 +269,7 @@ const WhyChooseUs = () => {
                   </p>
                   {isAdmin && (
                     <IconButton 
-                      onClick={() => toggleFeatureEdit(feature.id)} 
+                      onClick={() => toggleFeatureEdit(feature._id)}
                       className="absolute right-2 top-2"
                     >
                       <EditIcon />

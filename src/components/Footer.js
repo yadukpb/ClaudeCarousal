@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Linkedin, Twitter, Facebook, Mail, Phone, MapPin } from 'lucide-react';
+import { BACKEND_URL } from '../constants'
 
 const Footer = () => {
   const navigate = useNavigate();

@@ -6,6 +6,7 @@ import SaveIcon from '@mui/icons-material/Save'
 import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
 import CryptoJS from 'crypto-js'
+import { BACKEND_URL } from '../constants'
 
 const PrivacyPolicy = () => {
   const [isAdmin, setIsAdmin] = useState(false)

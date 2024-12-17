@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { UserCircle } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
+import { BACKEND_URL } from '../constants'
 
 // First, make sure to import Jost font in your global CSS or index.css:
 // @import url('https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap');
@@ -15,6 +16,7 @@ const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const location = useLocation();
   const isHomePage = location.pathname === '/';
@@ -46,6 +48,28 @@ const Header = () => {
       setIsScrolled(true);
     }
   }, [isHomePage]);
+
+  useEffect(() => {
+    const checkAdminStatus = () => {
+      const encryptedTokens = localStorage.getItem('tokens');
+      const userData = localStorage.getItem('userData');
+      if (encryptedTokens && userData) {
+        try {
+          const user = JSON.parse(userData).user;
+          setIsAdmin(user.role === 'admin');
+          setIsLoggedIn(true);
+        } catch (error) {
+          setIsAdmin(false);
+          setIsLoggedIn(false);
+        }
+      } else {
+        setIsAdmin(false);
+        setIsLoggedIn(false);
+      }
+    };
+
+    checkAdminStatus();
+  }, []);
 
   const navigationItems = [
     { name: 'HOME', href: '/' },
@@ -132,7 +156,7 @@ const Header = () => {
 
           <div className="flex items-center">
             <div className="relative">
-              {isLoggedIn ? (
+              {isAdmin && isLoggedIn ? (
                 <button 
                   onClick={() => setShowProfileMenu(!showProfileMenu)}
                   className="flex items-center space-x-2 px-3 sm:px-4 py-2 rounded-full hover:bg-[#EFE6DA] transition-all duration-300"

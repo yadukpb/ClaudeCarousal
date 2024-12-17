@@ -4,6 +4,7 @@ import { IconButton, TextField } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit'
 import SaveIcon from '@mui/icons-material/Save'
 import CryptoJS from 'crypto-js'
+import { BACKEND_URL } from '../constants'
 
 const TermsAndConditions = () => {
   const [isAdmin, setIsAdmin] = useState(false)

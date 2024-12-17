@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { FaFacebookF, FaTwitter, FaInstagram } from 'react-icons/fa';
+import { BACKEND_URL } from '../constants'
 
 const slides = [
   {
     title: " Leveraging Learning, Lifting Lives",
     subtitle: " EXCELLENCE IN LEGAL SERVICES",
     description: "Empowering lawyers, law students, and businesses with comprehensive research and support services.",
-    image: "https://themes.pixelwars.org/lawly/demo-01/wp-content/uploads/sites/2/2023/08/men-standing-before-illuminated-statue-praying-peace-generated-by-ai.jpg"
+    image: "https://res.cloudinary.com/daflbwzhe/image/upload/f_auto,q_auto/atynda0c8ky72l51txt0"
   },
   {
     title: "Research Excellence for Legal Professionals",
     subtitle: "FOCUSED RESEARCH, SHARPER RESULTS",
     description: "Supporting lawyers with meticulous legal research, document drafting, and case analysis.",
-    image: "https://themes.pixelwars.org/lawly/demo-01/wp-content/uploads/sites/2/2023/08/ahmetoz._portrait_of_a_lawyer_rays_of_light_bc920001-5a07-4ae7-b4a3-ae1ccbcb7141.jpg"
+    image: "https://res.cloudinary.com/daflbwzhe/image/upload/f_auto,q_auto/fvypsmxdbs76kdmzhpeb"
   }
 ];
 

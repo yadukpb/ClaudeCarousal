@@ -22,9 +22,10 @@ import AddBlog from './pages/AddBlog'
 import Calendar from './components/Calendar'
 import PrivacyPolicy from './pages/PrivacyPolicy'
 import TermsAndConditions from './pages/TermsAndConditions'
+import ReactGA from 'react-ga4';
+import Dashboard from './components/Dashboard';
 
-
-
+ReactGA.initialize('G-HY94XWWJPE ');
 
 const PrivateRoute = ({ children }) => {
   const userData = localStorage.getItem('userData')
@@ -55,15 +56,15 @@ const App = () => {
       <Router>
         <div className="flex flex-col min-h-screen">
           <Helmet>
-            <title>Law Firm Name | Legal Services & Consultation</title>
+            <title>Clause Craft Counsel | Legal Services & Consultation</title>
             <meta name="description" content="Professional legal services including corporate law, civil litigation, family law and more. Get expert legal consultation from our experienced attorneys." />
-            <meta name="keywords" content="law firm, legal services, attorneys, lawyers, legal consultation, corporate law, civil litigation" />
-            <meta property="og:title" content="Law Firm Name | Legal Services & Consultation" />
+            <meta name="keywords" content="Clause Craft Counsel, legal services, attorneys, lawyers, legal consultation, corporate law, civil litigation" />
+            <meta property="og:title" content="Clause Craft Counsel | Legal Services & Consultation" />
             <meta property="og:description" content="Professional legal services including corporate law, civil litigation, family law and more. Get expert legal consultation from our experienced attorneys." />
             <meta property="og:type" content="website" />
-            <meta property="og:url" content="https://yourdomain.com" />
-            <meta property="og:image" content="https://yourdomain.com/og-image.jpg" />
-            <link rel="canonical" href="https://yourdomain.com" />
+            <meta property="og:url" content="https://www.clausecraftcounsel.com" />
+            <meta property="og:image" content="https://www.clausecraftcounsel.com/og-image.jpg" />
+            <link rel="canonical" href="https://www.clausecraftcounsel.com" />
             <meta name="robots" content="index, follow" />
             <html lang="en" />
           </Helmet>
@@ -131,6 +132,7 @@ const App = () => {
                   <TermsAndConditions />
                 </>
               } />
+              <Route path="/dashboard" element={<Dashboard />} />
             </Routes>
           </main>
           <Footer />

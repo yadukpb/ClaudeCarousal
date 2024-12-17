@@ -24,7 +24,7 @@ const AboutSection = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
         <div className="space-y-8">
           <p className="text-gray-600 leading-relaxed">
-            At Lawly, we are more than just legal experts — we are dedicated partners on your journey towards justice and resolution. With a legacy of excellence and a commitment to upholding the principles of law, we stand as a beacon of support for individuals, businesses, and communities alike.
+            At Clause Craft Counsel, we are more than just legal experts — we are dedicated partners on your journey towards justice and resolution. With a legacy of excellence and a commitment to upholding the principles of law, we stand as a beacon of support for individuals, businesses, and communities alike.
           </p>
 
           <div className="space-y-6">

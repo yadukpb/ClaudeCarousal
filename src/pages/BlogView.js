@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, Home } from 'lucide-react';
 import { useParams, Link } from 'react-router-dom'
+import { BACKEND_URL } from '../constants'
 
 const Navbar = () => (
   <nav className="bg-white shadow-sm py-1">
@@ -203,8 +204,50 @@ const Comments = () => (
 );
 
 const BlogView = () => {
-  const { id } = useParams()
-  
+  const { id } = useParams();
+  const [blog, setBlog] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchBlog = async () => {
+      try {
+        const response = await fetch(`http://localhost:4001/api/blogs/${id}`);
+        if (response.ok) {
+          const data = await response.json();
+          setBlog(data);
+        }
+      } catch (error) {
+        console.error('Error fetching blog:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBlog();
+  }, [id]);
+
+  const handleCommentSubmit = async (commentData) => {
+    try {
+      const response = await fetch(`http://localhost:4001/api/blogs/${id}/comments`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(commentData)
+      });
+
+      if (response.ok) {
+        const updatedBlog = await response.json();
+        setBlog(updatedBlog);
+      }
+    } catch (error) {
+      console.error('Error posting comment:', error);
+    }
+  };
+
+  if (loading) return <div>Loading...</div>;
+  if (!blog) return <div>Blog not found</div>;
+
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
