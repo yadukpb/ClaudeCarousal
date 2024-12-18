@@ -8,10 +8,6 @@
             "value": "public, max-age=3600, s-maxage=86400"
           },
           {
-            "key": "Content-Security-Policy",
-            "value": "default-src 'self'; style-src 'self' 'unsafe-inline' https://your-stylesheet-url.com; connect-src 'self' https://clausecraftcarousal-backend.onrender.com http://localhost:4001 https://www.google-analytics.com https://*.cloudinary.com https://your-new-api-url.com;"
-          },
-          {
             "key": "X-Content-Type-Options",
             "value": "nosniff"
           },
