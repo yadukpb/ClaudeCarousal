@@ -67,8 +67,8 @@ const LawServices = () => {
     checkAdminStatus()
   }, [])
 
-  const handleLearnMore = () => {
-    navigate('/services')
+  const handleLearnMore = (serviceId) => {
+    navigate('/services#' + serviceId);
   }
 
   const handleHeaderEdit = (field, value) => {
@@ -145,7 +145,7 @@ const LawServices = () => {
                       ))}
                     </ul>
                   </div>
-                  <button onClick={handleLearnMore} className="text-white border border-white px-6 py-2 rounded hover:bg-white hover:text-black transition-all duration-300">
+                  <button onClick={() => handleLearnMore(service.id)} className="text-white border border-white px-6 py-2 rounded hover:bg-white hover:text-black transition-all duration-300">
                     Learn More →
                   </button>
                 </div>

@@ -157,6 +157,18 @@ const Header = () => {
           <div className="flex items-center">
             <div className="relative">
               {isAdmin && isLoggedIn ? (
+                
+
+<button 
+onClick={() => window.location.href = '/login'}
+className={`${
+  isScrolled ? 'text-[rgb(25,23,20)]' : 'text-white'
+} px-3 sm:px-4 py-2 rounded-full hover:bg-[#EFE6DA] transition-all duration-300 flex items-center space-x-2`}
+>
+<UserCircle className="w-5 sm:w-6 h-5 sm:h-6" />
+<span className="hidden sm:inline font-jost text-[16px]">Login</span>
+</button>
+              ) : (
                 <button 
                   onClick={() => setShowProfileMenu(!showProfileMenu)}
                   className="flex items-center space-x-2 px-3 sm:px-4 py-2 rounded-full hover:bg-[#EFE6DA] transition-all duration-300"
@@ -166,16 +178,6 @@ const Header = () => {
                     alt="Profile" 
                     className="w-7 sm:w-8 h-7 sm:h-8 rounded-full object-cover"
                   />
-                </button>
-              ) : (
-                <button 
-                  onClick={() => window.location.href = '/login'}
-                  className={`${
-                    isScrolled ? 'text-[rgb(25,23,20)]' : 'text-white'
-                  } px-3 sm:px-4 py-2 rounded-full hover:bg-[#EFE6DA] transition-all duration-300 flex items-center space-x-2`}
-                >
-                  <UserCircle className="w-5 sm:w-6 h-5 sm:h-6" />
-                  <span className="hidden sm:inline font-jost text-[16px]">Login</span>
                 </button>
               )}
             </div>

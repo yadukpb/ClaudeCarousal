@@ -119,7 +119,7 @@ const BlogContent = () => (
               </li>
             </ul>
           </div>
-
+          t
           <div className="bg-gray-50 p-6">
             <h2 className="text-xl font-serif mb-4">Recent Blogs</h2>
             <div className="space-y-4">
@@ -211,10 +211,12 @@ const BlogView = () => {
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const response = await fetch(`http://localhost:4001/api/blogs/${id}`);
+        const response = await fetch(`${BACKEND_URL}/api/blogs/${id}`);
         if (response.ok) {
           const data = await response.json();
           setBlog(data);
+        } else {
+          throw new Error('Blog not found');
         }
       } catch (error) {
         console.error('Error fetching blog:', error);

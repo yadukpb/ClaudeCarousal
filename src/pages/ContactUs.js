@@ -44,12 +44,18 @@ const ContactUs = () => {
   const fetchPageData = async () => {
     setLoading(true)
     try {
-      const response = await fetch(`${BACKEND_URL}/api/contact`)
-      const { data } = await response.json()
-      if (data) {
+      const response = await fetch(`${BACKEND_URL}/api/contact/content`)
+      const { contactInfo, titleSubtitle } = await response.json()
+      if (contactInfo && titleSubtitle) {
         setPageData({
-          ...pageData,
-          ...data,
+          title: titleSubtitle.title,
+          subtitle: titleSubtitle.subtitle,
+          address: contactInfo.address,
+          phone: contactInfo.phone,
+          email: contactInfo.email,
+          workingHours: contactInfo.workingHours,
+          consultationTitle: 'Free Consultation',
+          consultationText: 'Book a free 25-minute consultation with our legal experts to discuss your needs',
           isEditing: false
         })
       }
@@ -65,9 +71,30 @@ const ContactUs = () => {
     checkAdminStatus()
   }, [])
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-  }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+        const response = await fetch(`${BACKEND_URL}/api/contact/messages`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        });
+        if (!response.ok) throw new Error('Failed to send message');
+        alert('Message sent successfully');
+        setFormData({
+            name: '',
+            email: '',
+            phone: '',
+            subject: '',
+            message: ''
+        });
+    } catch (error) {
+        console.error('Error sending message:', error);
+        alert('Failed to send message');
+    }
+  };
 
   const handleChange = (e) => {
     setFormData({
@@ -137,7 +164,7 @@ const ContactUs = () => {
             ) : (
               <>
                 <h1 className="text-4xl md:text-5xl text-white font-serif mb-2">{pageData.title}</h1>
-                <p className="text-gray-200 text-lg max-w-2xl mx-auto px-4">{pageData.subtitle}</p>
+                <p className="text-white text-lg max-w-2xl mx-auto px-4">{pageData.subtitle}</p>
               </>
             )}
             {isAdmin && (
@@ -216,7 +243,7 @@ const ContactUs = () => {
             </div>
           </div>
 
-          <div className="space-y-8">
+          <div className="space-y-8 lg:col-span-1">
             <div className="bg-white rounded-xl shadow-lg p-8 relative">
               <h3 className="text-2xl font-serif text-gray-900 mb-6">Contact Information</h3>
               <div className="space-y-6">

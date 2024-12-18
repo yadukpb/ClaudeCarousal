@@ -173,7 +173,7 @@ const BlogPage = () => {
     const fetchBlogsWithAnalytics = async () => {
       const startTime = Date.now();
       try {
-        const response = await fetch(`${BACKEND_URL}/api/blogs/blogs`, {
+        const response = await fetch(`${BACKEND_URL}/api/all-blogs`, {
           credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
@@ -277,12 +277,12 @@ const BlogPage = () => {
                     <div className="p-4 sm:p-6">
                       <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-[#4A4A4A] mb-3">
                         <div className="flex items-center gap-1 sm:gap-2">
-                          <Calendar size={14} className="text-amber-600"/>
-                          <span>{new Date(post.createdAt).toLocaleDateString()}</span>
-                        </div>
-                        <div className="flex items-center gap-1 sm:gap-2">
                           <User size={14} className="text-amber-600"/>
                           <span>{DOMPurify.sanitize(post.author?.name) || 'Anonymous'}</span>
+                        </div>
+                        <div className="flex items-center gap-1 sm:gap-2">
+                          <Calendar size={14} className="text-amber-600"/>
+                          <span>{new Date(post.createdAt).toLocaleDateString()}</span>
                         </div>
                       </div>
                       <h3 className="font-cormorant text-lg sm:text-xl font-bold mb-2 sm:mb-3 text-[#1A1A1A] hover:text-amber-600 transition-colors">
@@ -362,6 +362,9 @@ const BlogPage = () => {
                           <h4 className="font-medium text-sm sm:text-base group-hover:text-amber-600 transition-colors">{post.title}</h4>
                           <p className="text-xs sm:text-sm text-[#4A4A4A] mt-1 sm:mt-2">
                             {new Date(post.createdAt).toLocaleDateString()}
+                          </p>
+                          <p className="text-xs sm:text-sm text-[#4A4A4A] mt-1 sm:mt-2">
+                            {DOMPurify.sanitize(post.author?.name) || 'Anonymous'}
                           </p>
                         </div>
                       </div>

@@ -1,10 +1,40 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Linkedin, Twitter, Facebook, Mail, Phone, MapPin } from 'lucide-react';
 import { BACKEND_URL } from '../constants'
 
 const Footer = () => {
   const navigate = useNavigate();
+  const [contactInfo, setContactInfo] = useState({});
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    const fetchContactInfo = async () => {
+      try {
+        const response = await fetch(`${BACKEND_URL}/api/contact/content`);
+        const data = await response.json();
+        setContactInfo(data.contactInfo);
+      } catch (error) {
+        console.error('Error fetching contact info:', error);
+      }
+    };
+
+    fetchContactInfo();
+  }, []);
+
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const response = await fetch(`${BACKEND_URL}/api/contact/messages-only`);
+        const data = await response.json();
+        setMessages(data);
+      } catch (error) {
+        console.error('Error fetching messages:', error);
+      }
+    };
+
+    fetchMessages();
+  }, []);
 
   const handleServiceClick = (e, href) => {
     e.preventDefault();
@@ -31,12 +61,6 @@ const Footer = () => {
     { title: 'Free Consultation', href: '/consultation' },
   ];
 
-  const contactInfo = [
-    { Icon: Mail, text: 'info@clausecounselcraft.solutions', href: 'mailto:info@clausecounselcraft.com' },
-    { Icon: Phone, text: '+91 XXXXX XXXXX', href: 'tel:+91XXXXXXXXXX' },
-    { Icon: MapPin, text: 'Gnana Bharathi Main Rd, Naagarabhaavi, Bengaluru, Karnataka 560072', href: '#' }
-  ];
-
   const socialLinks = [
     { Icon: Linkedin, href: '#', label: 'LinkedIn' },
     { Icon: Twitter, href: '#', label: 'Twitter' },
@@ -53,7 +77,6 @@ const Footer = () => {
               alt="ClauseCounselCraft" 
               className="h-auto w-auto"
             />
-            
           </div>
 
           <div>
@@ -92,17 +115,28 @@ const Footer = () => {
           <div>
             <h3 className="text-white text-lg font-medium mb-4">Contact Us</h3>
             <ul className="space-y-4">
-              {contactInfo.map(({ Icon, text, href }, index) => (
-                <li key={index} className="flex items-start space-x-3">
-                  <Icon size={20} className="mt-1 flex-shrink-0" />
-                  <a 
-                    href={href}
-                    className="hover:text-white transition-colors duration-200"
-                  >
-                    {text}
-                  </a>
-                </li>
-              ))}
+              <li className="flex items-start space-x-3">
+                <Mail size={20} className="mt-1 flex-shrink-0" />
+                <a 
+                  href={`mailto:${contactInfo.email}`}
+                  className="hover:text-white transition-colors duration-200"
+                >
+                  {contactInfo.email}
+                </a>
+              </li>
+              <li className="flex items-start space-x-3">
+                <Phone size={20} className="mt-1 flex-shrink-0" />
+                <a 
+                  href={`tel:${contactInfo.phone}`}
+                  className="hover:text-white transition-colors duration-200"
+                >
+                  {contactInfo.phone}
+                </a>
+              </li>
+              <li className="flex items-start space-x-3">
+                <MapPin size={20} className="mt-1 flex-shrink-0" />
+                <span>{contactInfo.address}</span>
+              </li>
             </ul>
             
             <div className="mt-6">

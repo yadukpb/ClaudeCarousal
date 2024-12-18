@@ -24,6 +24,7 @@ import PrivacyPolicy from './pages/PrivacyPolicy'
 import TermsAndConditions from './pages/TermsAndConditions'
 import ReactGA from 'react-ga4';
 import Dashboard from './components/Dashboard';
+import WorkWithUs from './components/WorkWIthUs';
 
 ReactGA.initialize('G-HY94XWWJPE ');
 
@@ -133,6 +134,7 @@ const App = () => {
                 </>
               } />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/work-with-us" element={<WorkWithUs />} />
             </Routes>
           </main>
           <Footer />

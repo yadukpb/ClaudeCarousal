@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { MessageCircle, X } from 'lucide-react';
 import { Dialog, Transition } from '@headlessui/react';
 import { BACKEND_URL } from '../constants'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const StickyContact = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -168,6 +170,7 @@ const StickyContact = () => {
             contact: '',
             question: ''
         });
+        toast.success('Your consultation request has been submitted. Our team will contact you soon.');
 
         if (typeof window !== 'undefined' && window.gtag) {
             window.gtag('event', 'consultation_scheduled', {
@@ -177,7 +180,7 @@ const StickyContact = () => {
         }
     } catch (error) {
         console.error('Error scheduling consultation:', error);
-        alert('Failed to schedule consultation. Please try again later.');
+        toast.error('Failed to schedule consultation. Please try again later.');
     }
   };
 
@@ -190,6 +193,7 @@ const StickyContact = () => {
 
   return (
     <div className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50">
+      <ToastContainer />
       <div 
         role="dialog" 
         aria-modal="true" 
@@ -416,7 +420,7 @@ const StickyContact = () => {
         }}
         aria-label="Open consultation booking"
         className={`bg-[#343842] text-white p-2 sm:p-3 md:p-4 rounded-full shadow-lg hover:bg-[#EFE6DA] hover:text-[#343842] transition-all duration-300 flex items-center justify-center group relative ${
-          showInitialAnimation ? 'animate-bounce' : 'opacity-0'
+          showInitialAnimation ? 'animate-bounce' : 'opacity-100'
         } ${isOpen ? 'scale-100' : ''}`}
       >
         {!isOpen ? (

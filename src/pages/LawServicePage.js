@@ -22,6 +22,13 @@ const LawServicePage = () => {
   useEffect(() => {
     fetchLegalServices();
     checkAdminStatus();
+    const hash = window.location.hash;
+    if (hash) {
+      const element = document.getElementById(hash.substring(1));
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
   }, []);
 
   const fetchLegalServices = async () => {
@@ -186,6 +193,7 @@ const LawServicePage = () => {
                 initial={{opacity: 0}} 
                 animate={{opacity: 1}} 
                 className="mb-12 sm:mb-20"
+                id={`category-${categoryIndex}`}
                 itemScope 
                 itemType="https://schema.org/Service"
               >
