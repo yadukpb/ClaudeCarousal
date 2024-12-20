@@ -76,19 +76,17 @@ const Dashboard = () => {
     }
   };
 
-  const CustomTable = ({ title, columns, data, filterKey }) => {
+  const CustomTable = ({ title, columns, columnKeys, data, filterKey }) => {
     const { searchQuery, sortColumn, sortDirection } = filters[filterKey] || { searchQuery: '', sortColumn: null, sortDirection: 'asc' };
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [expandedRow, setExpandedRow] = useState(null);
 
     const handleSearchChange = (e) => {
-      e.preventDefault();
       setFilters((prevFilters) => ({
         ...prevFilters,
         [filterKey]: { ...prevFilters[filterKey], searchQuery: e.target.value }
       }));
-      e.stopPropagation();
     };
 
     const filteredData = data.filter((row) =>
@@ -107,10 +105,7 @@ const Dashboard = () => {
         })
       : filteredData;
 
-    const paginatedData = sortedData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => ({
-      ...row,
-      date: new Date(row.date).toLocaleDateString()
-    }));
+    const paginatedData = sortedData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
     return (
       <motion.div
@@ -125,130 +120,74 @@ const Dashboard = () => {
           </h2>
           
           <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-            <div className="relative w-full md:w-96">
-              <TextField
-                fullWidth
-                placeholder="Search..."
-                value={searchQuery}
-                onChange={handleSearchChange}
-                variant="outlined"
-                InputProps={{
-                  startAdornment: <SearchIcon className="text-gray-400 mr-2" />,
-                  className: "bg-gray-50 rounded-lg"
-                }}
-              />
-            </div>
-            
-            {selectedRows.length > 0 && (
-              <Button
-                variant="contained"
-                color="error"
-                startIcon={<DeleteIcon />}
-                onClick={handleDeleteSelected}
-                className="bg-red-500 hover:bg-red-600 transition-colors"
-              >
-                Delete Selected ({selectedRows.length})
-              </Button>
-            )}
+            <TextField
+              fullWidth
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={handleSearchChange}
+              variant="outlined"
+              InputProps={{
+                startAdornment: <SearchIcon className="text-gray-400 mr-2" />,
+                className: "bg-gray-50 rounded-lg"
+              }}
+            />
           </div>
 
           <TableContainer className="mb-6 rounded-xl overflow-hidden border border-gray-100">
             <Table>
               <TableHead className="bg-gradient-to-r from-amber-500 to-amber-600">
                 <TableRow>
-                  <TableCell padding="checkbox" className="text-white">
+                  <TableCell padding="checkbox">
                     <Checkbox
-                      indeterminate={selectedRows.length > 0 && selectedRows.length < data.length}
                       checked={selectedRows.length === data.length}
-                      onChange={() => {
-                        if (selectedRows.length === data.length) {
-                          setSelectedRows([]);
-                        } else {
+                      onChange={(e) => {
+                        if (e.target.checked) {
                           setSelectedRows(data.map(row => row._id));
+                        } else {
+                          setSelectedRows([]);
                         }
                       }}
-                      className="text-white"
                     />
                   </TableCell>
-                  {columns.map((column) => (
-                    <TableCell 
-                      key={column}
-                      className="text-white font-cormorant text-lg font-bold py-4"
-                    >
+                  {columns.map((column, index) => (
+                    <TableCell key={index} className="text-white font-cormorant text-lg font-bold py-4">
                       {column}
                     </TableCell>
                   ))}
-                  <TableCell className="text-white font-cormorant text-lg font-bold">
-                    Actions
-                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {paginatedData.map((row, index) => (
-                  <React.Fragment key={row._id || index}>
-                    <TableRow 
-                      className="hover:bg-gray-50 transition-colors"
-                      sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                    >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          checked={selectedRows.includes(row._id)}
-                          onChange={() => handleSelectRow(row._id)}
-                        />
+                  <TableRow key={index} className="hover:bg-gray-50 transition-colors">
+                    <TableCell padding="checkbox">
+                      <Checkbox
+                        checked={selectedRows.includes(row._id)}
+                        onChange={() => handleSelectRow(row._id)}
+                      />
+                    </TableCell>
+                    {columnKeys.map((key, idx) => (
+                      <TableCell key={idx} className="text-[#4A4A4A] font-medium py-4">
+                        {row[key] !== undefined ? row[key] : 'N/A'}
                       </TableCell>
-                      {columns.map((column) => {
-                        const key = column.toLowerCase().replace(/\s+/g, '');
-                        console.log(`Column: ${column}, Value: ${row[key]}`);
-                        return (
-                          <TableCell 
-                            key={column}
-                            className="text-[#4A4A4A] font-medium py-4"
-                          >
-                            {row[key] !== undefined ? row[key] : 'N/A'}
-                          </TableCell>
-                        );
-                      })}
-                      <TableCell>
-                        <IconButton
-                          onClick={() => setExpandedRow(expandedRow === row._id ? null : row._id)}
-                          className="text-amber-600 hover:text-amber-700"
-                        >
-                          {expandedRow === row._id ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell colSpan={columns.length + 2} className="p-0">
-                        <Collapse in={expandedRow === row._id} timeout="auto" unmountOnExit>
-                          <div className="p-6 bg-gray-50">
-                            <Typography className="text-[#4A4A4A] text-lg">
-                              {row.question || row.message || row.details}
-                            </Typography>
-                          </div>
-                        </Collapse>
-                      </TableCell>
-                    </TableRow>
-                  </React.Fragment>
+                    ))}
+                  </TableRow>
                 ))}
               </TableBody>
             </Table>
           </TableContainer>
 
-          <div className="flex justify-end">
-            <TablePagination
-              component="div"
-              count={sortedData.length}
-              page={page}
-              onPageChange={(event, newPage) => setPage(newPage)}
-              rowsPerPage={rowsPerPage}
-              onRowsPerPageChange={(event) => {
-                setRowsPerPage(parseInt(event.target.value, 10));
-                setPage(0);
-              }}
-              rowsPerPageOptions={[10, 25, 50]}
-              className="text-[#4A4A4A]"
-            />
-          </div>
+          <TablePagination
+            component="div"
+            count={sortedData.length}
+            page={page}
+            onPageChange={(event, newPage) => setPage(newPage)}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={(event) => {
+              setRowsPerPage(parseInt(event.target.value, 10));
+              setPage(0);
+            }}
+            rowsPerPageOptions={[10, 25, 50]}
+          />
         </div>
       </motion.div>
     );
@@ -274,6 +213,7 @@ const Dashboard = () => {
         <CustomTable 
           title="Consultation Requests" 
           columns={['Name', 'Profession', 'Contact', 'Date', 'Time']} 
+          columnKeys={['name', 'profession', 'contact', 'date', 'time']}
           data={consultations}
           filterKey="consultation"
         />
@@ -281,6 +221,7 @@ const Dashboard = () => {
         <CustomTable 
           title="Contact Messages"
           columns={['Name', 'Email', 'Phone', 'Subject']} 
+          columnKeys={['name', 'email', 'phone', 'subject']}
           data={messages}
           filterKey="messages"
         />
@@ -288,6 +229,7 @@ const Dashboard = () => {
         <CustomTable 
           title="Applications"
           columns={['First Name', 'Last Name', 'Email', 'Contact', 'Preferred Month', 'Internship Duration', 'Preferred Practice Area', 'Submission Date']} 
+          columnKeys={['firstName', 'lastName', 'email', 'contact', 'preferredMonth', 'internshipDuration', 'preferredPracticeArea', 'submissionDate']}
           data={applications.map(app => ({
             ...app,
             submissionDate: new Date(app.createdAt).toLocaleDateString(),

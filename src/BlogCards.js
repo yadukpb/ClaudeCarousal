@@ -7,6 +7,8 @@ import "slick-carousel/slick/slick-theme.css";
 import { TextField, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
+import { BACKEND_URL } from './constants/index';
+
 
 const BlogCards = () => {
   const navigate = useNavigate();
@@ -19,7 +21,7 @@ const BlogCards = () => {
 
   React.useEffect(() => {
     const fetchBlogs = async () => {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/blogs`);
+      const response = await fetch(`${BACKEND_URL}/api/blogs`);
       const data = await response.json();
       setBlogPosts(data.map(post => ({
         id: post._id,
