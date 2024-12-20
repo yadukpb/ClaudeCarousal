@@ -90,7 +90,7 @@ const Header = () => {
     { name: 'ABOUT US', href: '/about' },
     { name: 'BLOGS', href: '/blog' },
     { name: 'CONTACT US', href: '/contact' },
-    { name: 'DASHBOARD', href: '/dashboard' }
+    ...(isAdmin && isLoggedIn ? [{ name: 'DASHBOARD', href: '/dashboard' }] : [])
   ].map(item => ({
     ...item,
     className: `font-jost text-[16px] font-[500] ${isHomePage && !isScrolled ? 'text-white hover:text-[rgb(25,23,20)]' : 'text-[rgb(25,23,20)]'} leading-normal hover:bg-[#EFE6DA] transition-all duration-300 px-3 py-1.5 rounded-[20px]`

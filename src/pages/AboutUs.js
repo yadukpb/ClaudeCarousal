@@ -12,8 +12,8 @@ const VisionMission = ({ title, content, isVision, isEditing, onEdit, isAdmin })
     initial={{ opacity: 0, y: 20 }}
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true }}
-    className={`bg-white rounded-xl p-8 md:p-12 shadow-lg border border-[#E8E8E8] relative ${
-      isVision ? 'md:min-h-[24rem]' : 'h-auto'
+    className={`bg-white rounded-xl p-4 md:p-6 shadow-lg border border-[#E8E8E8] relative ${
+      isVision ? 'h-auto' : 'h-auto'
     } transition-all duration-300 hover:shadow-xl`}
   >
     {isEditing ? (
@@ -68,7 +68,7 @@ const VisionMission = ({ title, content, isVision, isEditing, onEdit, isAdmin })
       </div>
     ) : (
       <>
-        <h3 className="font-cormorant text-3xl md:text-4xl font-bold mb-8 text-[#1A1A1A]">{title}</h3>
+        <h3 className="font-cormorant text-3xl md:text-4xl font-bold mb-4 text-[#1A1A1A]">{title}</h3>
         {isVision ? (
           <p className="text-[#4A4A4A] text-lg md:text-xl leading-relaxed">{content}</p>
         ) : (
@@ -285,6 +285,11 @@ const AboutUs = () => {
           <p className="text-[#4A4A4A] text-lg md:text-xl leading-relaxed">
             {aboutUsData.consultation.description}
           </p>
+          <div className="flex justify-center mt-4">
+            <button className="bg-green-500 text-white px-8 py-2 rounded-lg hover:bg-green-600 transition-colors">
+              Schedule a Meeting
+            </button>
+          </div>
         </section>
       </div>
     </div>

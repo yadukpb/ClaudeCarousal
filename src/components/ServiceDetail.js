@@ -50,19 +50,19 @@ const ServiceDetail = ({ serviceId, onClose, isAdmin }) => {
   useEffect(() => {
     const fetchServiceDetails = async () => {
       try {
-        const response = await fetch(`${BACKEND_URL}/services/${serviceId}`)
+        const response = await fetch(`${BACKEND_URL}/api/serviceview/${serviceId}`)
         const data = await response.json()
         setService(data)
         setServiceData({
-          title: data.title,
-          description: data.description,
+          title: data.details.title,
+          description: data.details.subtitle,
           isEditing: false,
         })
         setEditableData({
-          documentsNeeded: data.documentsNeeded || [],
-          whyChooseUs: data.whyChooseUs || [],
-          faqs: data.faqs || [],
-          pricing: data.pricing || {
+          documentsNeeded: data.details.documentsNeeded || [],
+          whyChooseUs: data.details.whyChooseUs || [],
+          faqs: data.details.faqs || [],
+          pricing: data.details.pricing || {
             basic: { title: 'Basic Plan', price: '₹15,000', features: [] },
             standard: { title: 'Standard Plan', price: '₹25,000', features: [] },
             premium: { title: 'Premium Plan', price: '₹40,000', features: [] },
@@ -214,7 +214,7 @@ const ServiceDetail = ({ serviceId, onClose, isAdmin }) => {
     >
       {service ? (
         <div className="motion-div h-full overflow-y-auto">
-          <div className="sticky top-16 z-10 bg-gray-50 pt-4 pb-6 mb-8">
+          <div className="sticky top-16 z-10 bg-gray-50 pt-4 pb-4 mb-8">
             <div className="text-center px-4">
               {serviceData.isEditing ? (
                 <div className="space-y-4">
@@ -245,7 +245,7 @@ const ServiceDetail = ({ serviceId, onClose, isAdmin }) => {
                   <h1 className="font-cormorant text-5xl sm:text-6xl font-bold text-[#1A1A1A] mb-3">
                     {serviceData.title}
                   </h1>
-                  <p className="font-cormorant text-2xl sm:text-3xl text-[#B8860B] mb-8">
+                  <p className="font-cormorant text-2xl sm:text-3xl text-[#B8860B] mb-4">
                     {serviceData.description}
                   </p>
                   {isAdmin && (
@@ -257,32 +257,9 @@ const ServiceDetail = ({ serviceId, onClose, isAdmin }) => {
               )}
             </div>
             
-            <div className="w-full bg-white shadow-lg border-t border-b border-[#E8E8E8]">
-              <div className="max-w-7xl mx-auto px-4 py-8 relative">
-                {editableData.isDescriptionEditing ? (
-                  <div className="space-y-4">
-                    <TextField
-                      fullWidth
-                      multiline
-                      rows={4}
-                      value={editableData.description}
-                      onChange={(e) => setEditableData(prev => ({ ...prev, description: e.target.value }))}
-                      variant="outlined"
-                    />
-                    {isAdmin && <IconButton onClick={() => toggleEdit('isDescriptionEditing')}><SaveIcon /></IconButton>}
-                  </div>
-                ) : (
-                  <>
-                    <p className="text-lg text-[#4A4A4A] leading-relaxed text-center">
-                      {editableData.description}
-                    </p>
-                    {isAdmin && <IconButton onClick={() => toggleEdit('isDescriptionEditing')} className="absolute right-2 top-2"><EditIcon /></IconButton>}
-                  </>
-                )}
-              </div>
-            </div>
+           
             
-            <div className="w-full max-w-3xl mx-auto mt-8 px-4">
+            <div className="w-full max-w-3xl mx-auto mt-4 px-4">
               <Button
                 onClick={handleScheduleMeeting}
                 variant="contained"
@@ -371,7 +348,7 @@ const ServiceDetail = ({ serviceId, onClose, isAdmin }) => {
                 ))}
               </div>
 
-              <div className="bg-white rounded-3xl p-8 shadow-xl mb-8">
+              <div className="bg-white rounded-3xl p-8 shadow-xl mb-8 mt-8">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="font-cormorant text-2xl font-bold">
                     Frequently Asked Questions
