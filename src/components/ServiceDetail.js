@@ -14,7 +14,7 @@ const ServiceDetail = ({ serviceId, onClose, isAdmin }) => {
 
   const [serviceData, setServiceData] = useState({
     title: '',
-    description: '',
+    subtitle: '',
     isEditing: false
   })
 
@@ -55,7 +55,7 @@ const ServiceDetail = ({ serviceId, onClose, isAdmin }) => {
         setService(data)
         setServiceData({
           title: data.details.title,
-          description: data.details.subtitle,
+          subtitle: data.details.subtitle,
           isEditing: false,
         })
         setEditableData({
@@ -81,10 +81,36 @@ const ServiceDetail = ({ serviceId, onClose, isAdmin }) => {
     }
   }, [serviceId])
 
+  const updateServiceDetails = async () => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/serviceview/${serviceId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ details: { ...serviceData, ...editableData } }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setService(data);
+        setServiceData({ ...serviceData, isEditing: false });
+        setEditableData({ ...editableData });
+      } else {
+        console.error(data.message);
+      }
+    } catch (error) {
+      console.error('Error updating service details:', error);
+    }
+  };
+
   const toggleServiceEdit = () => {
-    if (!isAdmin) return
-    setServiceData(prev => ({ ...prev, isEditing: !prev.isEditing }))
-  }
+    if (!isAdmin) return;
+    if (serviceData.isEditing) {
+      updateServiceDetails();
+    } else {
+      setServiceData(prev => ({ ...prev, isEditing: !prev.isEditing }));
+    }
+  };
 
   const updateServiceData = (field, value) => {
     setServiceData(prev => ({
@@ -227,12 +253,10 @@ const ServiceDetail = ({ serviceId, onClose, isAdmin }) => {
                   />
                   <TextField
                     fullWidth
-                    value={serviceData.description}
-                    onChange={(e) => updateServiceData('description', e.target.value)}
+                    value={serviceData.subtitle}
+                    onChange={(e) => updateServiceData('subtitle', e.target.value)}
                     variant="outlined"
-                    label="Service Description"
-                    multiline
-                    rows={2}
+                    label="Service Subtitle"
                   />
                   {isAdmin && (
                     <IconButton onClick={toggleServiceEdit} className="absolute right-4 top-4">
@@ -246,7 +270,7 @@ const ServiceDetail = ({ serviceId, onClose, isAdmin }) => {
                     {serviceData.title}
                   </h1>
                   <p className="font-cormorant text-2xl sm:text-3xl text-[#B8860B] mb-4">
-                    {serviceData.description}
+                    {serviceData.subtitle}
                   </p>
                   {isAdmin && (
                     <IconButton onClick={toggleServiceEdit} className="absolute right-4 top-4">
