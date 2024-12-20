@@ -106,7 +106,7 @@ const App = () => {
                 </>
               } />
               <Route path="/blog" element={<BlogPage />} />
-              <Route path="/blog1" element={<BlogView />} />
+              <Route path="/blog/:id" element={<BlogView />} />
               <Route path="/about" element={<AboutUs />} />
               <Route path="/contact" element={<ContactUs />} />
               <Route path="/add-blog" element={

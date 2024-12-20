@@ -32,6 +32,18 @@ const Header = () => {
     { name: 'Logout', href: '/logout' }
   ];
 
+  const applicationFields = [
+    { name: 'First Name', key: 'firstName' },
+    { name: 'Last Name', key: 'lastName' },
+    { name: 'Email', key: 'email' },
+    { name: 'Contact Number', key: 'contactNumber' },
+    { name: 'Preferred Month', key: 'preferredMonth' },
+    { name: 'Internship Duration', key: 'internshipDuration' },
+    { name: 'Preferred Practice Area', key: 'preferredPracticeArea' },
+    { name: 'Created At', key: 'createdAt' },
+    { name: 'Updated At', key: 'updatedAt' }
+  ];
+
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 0) {
@@ -77,7 +89,8 @@ const Header = () => {
     { name: 'WORK WITH US', href: '/work-with-us' },
     { name: 'ABOUT US', href: '/about' },
     { name: 'BLOGS', href: '/blog' },
-    { name: 'CONTACT US', href: '/contact' }
+    { name: 'CONTACT US', href: '/contact' },
+    { name: 'DASHBOARD', href: '/dashboard' }
   ].map(item => ({
     ...item,
     className: `font-jost text-[16px] font-[500] ${isHomePage && !isScrolled ? 'text-white hover:text-[rgb(25,23,20)]' : 'text-[rgb(25,23,20)]'} leading-normal hover:bg-[#EFE6DA] transition-all duration-300 px-3 py-1.5 rounded-[20px]`
@@ -157,29 +170,16 @@ const Header = () => {
           <div className="flex items-center">
             <div className="relative">
               {isAdmin && isLoggedIn ? (
-                
-
-<button 
-onClick={() => window.location.href = '/login'}
-className={`${
-  isScrolled ? 'text-[rgb(25,23,20)]' : 'text-white'
-} px-3 sm:px-4 py-2 rounded-full hover:bg-[#EFE6DA] transition-all duration-300 flex items-center space-x-2`}
->
-<UserCircle className="w-5 sm:w-6 h-5 sm:h-6" />
-<span className="hidden sm:inline font-jost text-[16px]">Login</span>
-</button>
-              ) : (
                 <button 
-                  onClick={() => setShowProfileMenu(!showProfileMenu)}
-                  className="flex items-center space-x-2 px-3 sm:px-4 py-2 rounded-full hover:bg-[#EFE6DA] transition-all duration-300"
+                  onClick={() => window.location.href = '/login'}
+                  className={`${
+                    isScrolled ? 'text-[rgb(25,23,20)]' : 'text-white'
+                  } px-3 sm:px-4 py-2 rounded-full hover:bg-[#EFE6DA] transition-all duration-300 flex items-center space-x-2`}
                 >
-                  <img 
-                    src={userProfile.image} 
-                    alt="Profile" 
-                    className="w-7 sm:w-8 h-7 sm:h-8 rounded-full object-cover"
-                  />
+                  <UserCircle className="w-5 sm:w-6 h-5 sm:h-6" />
+                  <span className="hidden sm:inline font-jost text-[16px]">Login</span>
                 </button>
-              )}
+              ) : null}
             </div>
           </div>
         </div>

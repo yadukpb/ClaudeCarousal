@@ -23,28 +23,16 @@ const WhyChooseUs = () => {
   const [shouldFetchData, setShouldFetchData] = useState(true);
 
   useEffect(() => {
-    if (shouldFetchData) {
-      fetchData();
-      setShouldFetchData(false);
-    }
+    fetchData();
     checkAdminStatus();
-  }, [shouldFetchData]);
+  }, []);
 
   const fetchData = async () => {
     try {
-      const tokens = localStorage.getItem('tokens');
-      const decryptedTokens = CryptoJS.AES.decrypt(
-        tokens,
-        process.env.REACT_APP_ENCRYPTION_KEY
-      ).toString(CryptoJS.enc.Utf8);
-      
-      const { accessToken } = JSON.parse(decryptedTokens);
-      
-      const response = await fetch(`${BACKEND_URL}/api/why-choose-us`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
-      });
+      const response = await fetch(`${BACKEND_URL}/api/why-choose-us`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
       const { data } = await response.json();
       setHeaderData({
         title: data.header.title,
@@ -72,29 +60,34 @@ const WhyChooseUs = () => {
   };
 
   const saveHeader = async () => {
+    console.log('Attempting to save header:', headerData);
     try {
+      if (!headerData.isEditing) return;
+
       const tokens = localStorage.getItem('tokens');
       const decryptedTokens = CryptoJS.AES.decrypt(
         tokens,
         process.env.REACT_APP_ENCRYPTION_KEY
       ).toString(CryptoJS.enc.Utf8);
-      
+
       const { accessToken } = JSON.parse(decryptedTokens);
-      
+
       const response = await fetch(`${BACKEND_URL}/api/why-choose-us/header`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`
+          'Authorization': `Bearer ${accessToken}`,
         },
         body: JSON.stringify({
           title: headerData.title,
-          subtitle: headerData.subtitle
-        })
+          subtitle: headerData.subtitle,
+        }),
       });
       if (response.ok) {
+        console.log('Header saved successfully');
         toggleHeaderEdit();
-        setShouldFetchData(true);
+      } else {
+        console.log('Failed to save header:', response.status);
       }
     } catch (error) {
       console.error('Error saving header:', error);
@@ -102,30 +95,35 @@ const WhyChooseUs = () => {
   };
 
   const saveFeature = async (id) => {
+    console.log('Attempting to save feature with ID:', id);
     try {
+      const feature = features.find((f) => f._id === id);
+      if (!feature.isEditing) return;
+
       const tokens = localStorage.getItem('tokens');
       const decryptedTokens = CryptoJS.AES.decrypt(
         tokens,
         process.env.REACT_APP_ENCRYPTION_KEY
       ).toString(CryptoJS.enc.Utf8);
-      
+
       const { accessToken } = JSON.parse(decryptedTokens);
-      
-      const feature = features.find(f => f._id === id);
+
       const response = await fetch(`${BACKEND_URL}/api/why-choose-us/feature/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`
+          'Authorization': `Bearer ${accessToken}`,
         },
         body: JSON.stringify({
           title: feature.title,
-          description: feature.description
-        })
+          description: feature.description,
+        }),
       });
       if (response.ok) {
+        console.log('Feature saved successfully:', feature);
         toggleFeatureEdit(id);
-        setShouldFetchData(true);
+      } else {
+        console.log('Failed to save feature:', response.status);
       }
     } catch (error) {
       console.error('Error saving feature:', error);
@@ -142,29 +140,28 @@ const WhyChooseUs = () => {
       } catch (error) {
         setIsAdmin(false)
       }
+    } else {
+      setIsAdmin(false);
     }
   }
 
   const toggleHeaderEdit = () => {
-    if (!isAdmin) return;
     if (headerData.isEditing) {
+      console.log('Saving header after edit...');
       saveHeader();
     } else {
-      setHeaderData(prev => ({ ...prev, isEditing: true }));
+      setHeaderData((prev) => ({ ...prev, isEditing: true }));
     }
   };
 
   const toggleFeatureEdit = (id) => {
-    if (!isAdmin) return;
-    const feature = features.find(f => f._id === id);
+    const feature = features.find((f) => f._id === id);
     if (feature.isEditing) {
-      saveFeature(id);
+        saveFeature(id);
     } else {
-      setFeatures(prevFeatures =>
-        prevFeatures.map(f =>
-          f._id === id ? { ...f, isEditing: true } : f
-        )
-      );
+        setFeatures((prevFeatures) =>
+            prevFeatures.map((f) => (f._id === id ? { ...f, isEditing: true } : f))
+        );
     }
   };
 
@@ -178,6 +175,7 @@ const WhyChooseUs = () => {
 
   return (
     <div className="bg-gradient-to-b from-slate-50 to-slate-100 py-16">
+      {features.length === 0 && console.log('No features available to display.')}
       <div className="max-w-7xl mx-auto px-6">
         <motion.div 
           initial={{opacity: 0, y: -20}} 

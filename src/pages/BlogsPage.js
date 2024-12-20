@@ -225,7 +225,7 @@ const BlogPage = () => {
             <motion.div 
               initial={{opacity: 0, y: -20}}
               animate={{opacity: 1, y: 0}}
-              className="sticky top-20 sm:top-24 md:top-28 bg-gradient-to-b from-slate-50 to-slate-100 z-10 py-4"
+              className="sticky top-18 sm:top-22 md:top-26 bg-gradient-to-b from-slate-50 to-slate-100 z-10 py-4"
             >
               <h2 className="font-cormorant text-3xl sm:text-4xl md:text-[45px] leading-tight sm:leading-[53px] font-bold text-[#1A1A1A] text-center">
                 Legal Insights & Updates

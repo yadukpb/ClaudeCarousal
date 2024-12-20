@@ -90,7 +90,7 @@ const Login = () => {
             role: 'user'
         }
 
-        const response = await axios.post(process.env.REACT_APP_API_URL + endpoint, requestData, {
+        const response = await axios.post(BACKEND_URL + endpoint, requestData, {
             headers: {
                 'X-CSRF-TOKEN': getCsrfToken(),
                 'Content-Type': 'application/json'

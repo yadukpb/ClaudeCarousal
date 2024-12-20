@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { TextField, IconButton } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
+import { BACKEND_URL } from '../constants';
 
 const WorkWithUs = () => {
   const [isInternship, setIsInternship] = useState(true);
@@ -21,8 +22,34 @@ const WorkWithUs = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/workwithus/internship`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+      if (response.ok) {
+        alert('Application submitted successfully');
+        setFormData({
+          firstName: '',
+          middleName: '',
+          lastName: '',
+          email: '',
+          contactNumber: '',
+          preferredMonth: '',
+          internshipDuration: '',
+          preferredPracticeArea: ''
+        });
+      } else {
+        alert('Error submitting application');
+      }
+    } catch (error) {
+      alert('Error submitting application');
+    }
   };
 
   return (
@@ -87,9 +114,9 @@ const WorkWithUs = () => {
               <TextField name="internshipDuration" label="Internship Duration" fullWidth onChange={handleChange} required />
               <TextField name="preferredPracticeArea" label="Preferred Practice Area" fullWidth onChange={handleChange} required />
               <div className="pt-6">
-                <IconButton type="submit" className="bg-amber-600 text-white px-6 py-3 rounded-lg hover:bg-amber-700 transition-colors">
-                  <SaveIcon /> Submit
-                </IconButton>
+                <button type="submit" className="bg-amber-600 text-white px-8 py-4 rounded-lg shadow-lg hover:bg-amber-700 transition-colors transform hover:scale-105">
+                  Submit
+                </button>
               </div>
             </form>
           </div>

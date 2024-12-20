@@ -12,7 +12,7 @@ const LawServices = () => {
   const [headerData, setHeaderData] = useState({
     title: "Our Law Services",
     subtitle: "Elevating Service Standards in Law",
-    description: "We provide comprehensive legal services tailored to meet your specific needs. Our experienced team of attorneys is dedicated to delivering exceptional results.",
+    description: "We provide comprehensive legal services tailored to meet your specific needs. Our experienced team is dedicated to delivering exceptional results.",
     isEditing: false
   })
 
